@@ -19,6 +19,7 @@
 	},
 	"dependencies": {
 		"@t3-oss/env-nextjs": "^0.12.0",
+		"@vercel/postgres": "^0.10.0",
 		"css": "^3.0.0",
 		"drizzle-orm": "^0.41.0",
 		"next": "^15.2.3",
