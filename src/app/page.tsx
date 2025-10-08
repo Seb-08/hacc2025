@@ -4,8 +4,8 @@ export default function HomePage() {
   const pages = [
     { name: "calina", path: "/CalinaKaila/Calina" },
     { name: "kaila", path: "/CalinaKaila/Kaila" },
-    { name: "sebastian", path: "/SebastianTiffany/sebastian" },
-    { name: "tiffiany", path: "/SebastianTiffany/tiffiany" },
+    { name: "search", path: "/Sebastian/searching" },
+    { name: "upload", path: "/Sebastian/uploading" },
     { name: "tony", path: "/TonyDanica/tony" },
     { name: "danica", path: "/TonyDanica/danica" },
     { name: "lokahi", path: "/TonyDanica/lokahi" },
