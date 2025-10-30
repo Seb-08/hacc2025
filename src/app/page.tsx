@@ -1,35 +1,55 @@
-import Link from "next/link";
+// Hawai‘i ETS Homepage
+// Mililani High School - Kaila Wallace
 
-export default function HomePage() {
-  const pages = [
-    { name: "calina", path: "/CalinaKaila/Calina" },
-    { name: "kaila", path: "/CalinaKaila/Kaila" },
-    { name: "search", path: "/Sebastian/searching" },
-    { name: "upload", path: "/Sebastian/uploading" },
-    { name: "tony", path: "/TonyDanica/tony" },
-    { name: "danica", path: "/TonyDanica/danica" },
-    { name: "lokahi", path: "/TonyDanica/lokahi" },
-    { name: "henery", path: "/JathanHenery/henery" },
-    { name: "jathan", path: "/JathanHenery/jathan" },
-  ];
+import React from 'react'
 
+export default function Homepage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-6 px-4 py-16">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {pages.map((page) => (
-            <Link
-              key={page.name}
-              href={page.path}
-              className="flex items-center justify-center rounded-xl bg-white/10 p-4 text-xl font-bold text-white hover:bg-white/20"
-            >
-              {page.name}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </main>
-  );
-}
+    <main className="bg-[#F4FAFA] text-[#002C3E] min-h-screen">
+      {/* Hero Section */}
+      <section className="text-center py-24 px-6">
+        <h2 className="text-4xl font-extrabold mb-4">
+          Independent Verification and Validation Reports
+        </h2>
 
-//testing if commits make pull requests 
+        <p className="text-gray-700 mb-10 max-w-2xl mx-auto">
+          Enterprise Technology Services (ETS) leads statewide IT strategy, cybersecurity,
+          and digital services to better serve the people of Hawai‘i.
+        </p>
+
+        {/* Search Bar */}
+        <div className="flex justify-center mb-10">
+          <input
+            type="text"
+            placeholder="Search ETS Records"
+            className="input input-bordered rounded-l-full w-full max-w-lg text-gray-700 focus:outline-none"
+          />
+          <button className="btn bg-[#2FA8A3] hover:bg-[#24938f] text-white rounded-r-full">
+            Search
+          </button>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-center gap-4">
+          <a href="/services" className="btn bg-[#2FA8A3] text-white hover:bg-[#24938f]">
+            Explore Services
+          </a>
+          <a
+            href="/projects"
+            className="btn btn-outline border-[#2FA8A3] text-[#002C3E] hover:bg-[#E7F7F6]"
+          >
+            View Active Projects
+          </a>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="h-[5px] bg-gradient-to-r from-[#00796B] to-[#2FA8A3] w-full"></div>
+
+      {/* Quick Access Title */}
+      <section className="py-16 bg-white text-center border-t border-gray-200">
+        <h3 className="text-xl font-bold">Quick Access</h3>
+      </section>
+    </main>
+  )
+}
