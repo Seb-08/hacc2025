@@ -21,7 +21,7 @@ export default function Homepage() {
           <input
             type="text"
             placeholder="Search ETS Records"
-            className="input input-bordered rounded-l-full w-full max-w-lg text-gray-700 focus:outline-none"
+            className="input input-bordered rounded-l-full w-200 max-w-200 text-gray-700 focus:outline-none"
           />
           <button className="btn bg-[#2FA8A3] hover:bg-[#24938f] text-white rounded-r-full">
             Search
@@ -34,7 +34,7 @@ export default function Homepage() {
             Explore Services
           </a>
           <a
-            href="/projects"
+            href="/monthlyreports"
             className="btn btn-outline border-[#2FA8A3] text-[#002C3E] hover:bg-[#E7F7F6]"
           >
             View Active Projects
@@ -47,7 +47,7 @@ export default function Homepage() {
 
       {/* Quick Access Title */}
       <section className="py-16 bg-white text-center border-t border-gray-200">
-        <h3 className="text-xl font-bold">Quick Access</h3>
+        <h3 className="text-xl font-bold"></h3>
       </section>
     </main>
   )

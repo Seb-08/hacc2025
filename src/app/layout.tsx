@@ -1,18 +1,24 @@
-// Hawai‘i ETS Website Layout
 
+// Hawai‘i ETS Website Layout with Editable Paths
 import '~/styles/globals.css'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
+import Link from 'next/link'
 
 const geist = Geist({ subsets: ['latin'], display: 'swap' })
 
-// Basic site info for browser tab
 export const metadata: Metadata = {
   title: 'Hawai‘i ETS',
   description: 'Enterprise Technology Services – State of Hawai‘i',
 }
 
-const navItems = ['Homepage', 'Projects', 'Records', 'Reports', 'Login']
+// Nav location 
+const navItems = [
+  { name: 'Homepage', path: '/' },
+  { name: 'Projects', path: '/' },
+  { name: 'Reports', path: '/monthlyreports' },
+  { name: 'Login', path: '/login' },
+]
 
 function Header() {
   return (
@@ -28,7 +34,7 @@ function Header() {
         {/* Logo and title */}
         <div className="flex items-center gap-3">
           <img
-            src="https://lq4he0tkzv.ufs.sh/f/0EzP3waMS4PRTjN0tz3DldOMHbpyzICkXnsJQigKNf40jo3x"
+            src="https://lq4he0tkzv.ufs.sh/f/0EzP3waMS4PR39jxiXn6iEPtmsdYQDK9wLB50rhIX7jqeSH1"
             alt="Hawai‘i ETS Logo"
             className="h-12 w-auto"
           />
@@ -37,7 +43,7 @@ function Header() {
           </h1>
         </div>
 
-        {/* Navigation links */}
+        {/* Navigation */}
         <Navigation />
       </div>
       <div className="h-[4px] w-full bg-[#006D68]"></div>
@@ -49,14 +55,16 @@ function Navigation() {
   return (
     <nav className="flex items-center gap-8 text-sm font-medium">
       {navItems.map((item) => (
-        <a
-          key={item}
-          href={`/${item.toLowerCase()}`}
+        <Link
+          key={item.name}
+          href={item.path}
           className="relative group text-white hover:text-gray-100 transition-all duration-300"
         >
-          {item}
+          {/* Page name */}
+          {item.name}
+          {/* Underline hover effect */}
           <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full"></span>
-        </a>
+        </Link>
       ))}
     </nav>
   )
@@ -68,7 +76,9 @@ function Footer() {
       className="text-center py-6 text-sm border-t border-[#2FB8AC] mt-auto"
       style={{ backgroundColor: '#002C3E', color: '#FFFFFF' }}
     >
-      <p>© {new Date().getFullYear()} State of Hawai‘i — Enterprise Technology Services</p>
+      <p>
+        © {new Date().getFullYear()} State of Hawai‘i — Enterprise Technology Services
+      </p>
     </footer>
   )
 }
@@ -76,19 +86,25 @@ function Footer() {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geist.className} min-h-screen flex flex-col bg-[#F5F7F8] text-[#002C3E]`}>
-        {/* Header */}
+      <body
+        className={`${geist.className} min-h-screen flex flex-col bg-[#F5F7F8] text-[#002C3E]`}
+      >
+        {/* Header always stays */}
         <Header />
 
         {/* Spacer for fixed header */}
         <div className="h-[100px]" />
 
-        {/* Page content */}
-        <main className="flex-grow max-w-[1250px] mx-auto px-10 py-10">{children}</main>
+        {/* This is where your page content will load */}
+        <main className="flex-grow max-w-[1250px] mx-auto px-10 py-10">
+          {children}
+        </main>
 
-        {/* Footer */}
+        {/* Footer always stays */}
         <Footer />
       </body>
     </html>
   )
 }
+
+
