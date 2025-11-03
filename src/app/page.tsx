@@ -1,5 +1,4 @@
 // Hawai‘i ETS Homepage
-// Mililani High School - Kaila Wallace
 
 import React from 'react'
 
