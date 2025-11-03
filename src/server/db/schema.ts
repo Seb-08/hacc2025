@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, pgTableCreator, pgTable, serial, varchar, integer, date, timestamp, boolean } from "drizzle-orm/pg-core";
+import { index, pgTableCreator, pgTable, serial, varchar, integer, date, timestamp, boolean, text } from "drizzle-orm/pg-core";
 import { relations } from 'drizzle-orm';
 
 
@@ -34,11 +34,15 @@ export const projects = pgTable('projects', {
   name: varchar('name', { length: 256 }).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   departmentId: integer('department_id').notNull().references(() => departments.id),
+  startDate: date('start_date').notNull(),
+  projectedEndDate: date('projected_end_date').notNull(),
+
 });
 
 // ---------------- Issues ----------------
 export const issues = pgTable('issues', {
   id: serial('id').primaryKey(),
+  projectId: integer('project_id').references(() => projects.id),
   name: varchar('name', { length: 256 }).notNull(),
   issueDescription: varchar('issue_description', { length: 1024 }),
   impact: varchar('impact', { length: 10 }).notNull(), // 'High', 'Medium', 'Low'
@@ -51,6 +55,7 @@ export const issues = pgTable('issues', {
 // ---------------- Schedules ----------------
 export const schedules = pgTable('schedules', {
   id: serial('id').primaryKey(),
+  projectId: integer('project_id').references(() => projects.id),
   featureName: varchar('feature_name', { length: 255 }).notNull(),
   deadlineDate: date('deadline_date').notNull(),
   completed: boolean('completed').default(false).notNull(),
@@ -95,13 +100,23 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
     references: [departments.id],
   }),
   reports: many(monthlyReports),
+  issues:many(issues),
+  schedules:many(schedules),
 }));
 
-export const issueRelations = relations(issues, ({ many }) => ({
+export const issueRelations = relations(issues, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [issues.projectId],
+    references: [projects.id],
+  }),
   reports: many(monthlyReports),
 }));
 
-export const scheduleRelations = relations(schedules, ({ many }) => ({
+export const scheduleRelations = relations(schedules, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [schedules.projectId],
+    references: [projects.id],
+  }),
   reports: many(monthlyReports),
 }));
 
