@@ -106,7 +106,7 @@ export default function Layer2Page() {
                 <p className="text-center text-base text-black">
                     Project Description goes here.
                 </p>
-            </div>
+            </div>  
         </div>
     </div>
 

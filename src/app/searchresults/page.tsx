@@ -66,7 +66,11 @@ export default function Layer2Page() {
         {/* Published */}
         <div className="card w-[26rem] border border-[#DEE9ED] rounded-2xl shadow-md">
             <div className="relative bg-[#179A97] flex justify-center items-center p-6 rounded-t-2xl">
-                <h2 className="text-white font-bold text-xl">Project Title</h2>
+                <div>
+                    <Link href="/">
+                        <h2 className="text-white font-bold text-xl">Project Title</h2>
+                    </Link>
+                </div>
             <div className="absolute top-3 right-3 rounded-xl bg-[#5cb85c] px-3 py-1">
                 <h2 className="text-xs text-white">Active</h2>
             </div>
