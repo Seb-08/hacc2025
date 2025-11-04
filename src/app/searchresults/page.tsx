@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { projects } from "~/server/db/schema";
+import { db } from "~/server/db";
 
 /*
 COLOR PALETTE
@@ -17,9 +19,18 @@ Pure White [#FFFFFF]
 Green Success [#5cb85c]
 Red Fail [#de5a50]
 */
-export default function Layer2Page() {
+export default async function Layer2Page() {
+    const projectName = await db.query.projects.findMany({
+    columns: {
+      name: true,
+    },
+  })
 
-
+    const summaryReport = await db.query.monthlyReports.findMany({
+        columns: {
+            summary: true,
+        }
+    })
 
 
 
@@ -71,23 +82,27 @@ export default function Layer2Page() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center mt-8">
 
         {/* Published */}
+        {projectName.map((projectName,index) => (
         <div className="card w-[26rem] border border-[#DEE9ED] rounded-2xl shadow-md">
             <div className="relative bg-[#179A97] flex justify-center items-center p-6 rounded-t-2xl">
                 <div>
                     <Link href="/">
-                        <h2 className="text-white font-bold text-xl">Project Title</h2>
+                        <h2 className="text-white font-bold text-xl">{projectName.name}</h2>
                     </Link>
                 </div>
             <div className="absolute top-3 right-3 rounded-xl bg-[#5cb85c] px-3 py-1">
                 <h2 className="text-xs text-white">Active</h2>
             </div>
             </div>
+            {summaryReport.map((summaryReport,index) => (
             <div className="card-body bg-white p-6 rounded-b-2xl">
                 <p className="text-center text-base text-black">
-                    Project Description goes here.
+                    {summaryReport.summary}
                 </p>
             </div>
+            ))}
         </div>
+        ))}
         {/* In Progress */}
         <div className="card w-[26rem] border border-[#DEE9ED] rounded-2xl shadow-md">
             <div className="relative bg-[#179A97] flex justify-center items-center p-6 rounded-t-2xl">
