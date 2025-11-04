@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '~/server/db';
-import { issues } from '~/server/db/schema';
+import { projects } from '~/server/db/schema';
 import { eq } from 'drizzle-orm';
 
-export async function GET() {
-  const data = await db.select().from(issues);
-  return NextResponse.json(data);
-}
+export async function GET(req: NextRequest) {
+  const departmentId = req.nextUrl.searchParams.get('departmentId');
+  if (!departmentId) return NextResponse.json([], { status: 400 });
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const [newIssue] = await db.insert(issues).values(body).returning();
-  return NextResponse.json(newIssue);
-}
+  const departmentProjects = await db.query.projects.findMany({
+    where: eq(projects.departmentId, parseInt(departmentId)),
+  });
 
-export async function PATCH(req: NextRequest) {
-  const body = await req.json();
-  await db.update(issues).set({ status: body.status }).where(eq(issues.id, body.id));
-  return NextResponse.json({ success: true });
+  return NextResponse.json(departmentProjects);
 }

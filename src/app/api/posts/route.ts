@@ -1,53 +1,29 @@
-import { NextResponse } from "next/server";
-import { db } from "../../../server/db";
-import { posts } from "../../../server/db/schema";
-import { ilike, asc, desc } from "drizzle-orm";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '~/server/db';
+import { issues } from '~/server/db/schema';
+import { eq } from 'drizzle-orm';
 
-export async function POST(req: Request) {
-  try {
-    const { name, rating, imageUrl } = await req.json();
+export async function GET(req: NextRequest) {
+  const projectId = req.nextUrl.searchParams.get('projectId');
+  if (!projectId) return NextResponse.json([], { status: 400 });
 
-    if (!name || rating == null || !imageUrl) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
-
-    await db.insert(posts).values({
-      name,
-      rating: Number(rating),
-      imageUrl,
-    });
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
-  }
+  const projectIssues = await db.query.issues.findMany({
+    where: eq(issues.projectId, parseInt(projectId)),
+  });
+  return NextResponse.json(projectIssues);
 }
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const query = searchParams.get("q")?.trim() ?? "";
-  const sortBy = searchParams.get("sortBy") || "createdAt";
-  const order = searchParams.get("order") || "desc";
+export async function PATCH(req: NextRequest) {
+  const body = await req.json();
+  const { id, status, resolutionDescription } = body;
+  if (!id || !status) return NextResponse.json({ error: 'Missing id or status' }, { status: 400 });
 
-  // Determine sort direction
-  const sortDirection = order === "asc" ? asc : desc;
+  await db.update(issues)
+    .set({
+      status,
+      resolutionDescription: resolutionDescription ?? null,
+    })
+    .where(eq(issues.id, id));
 
-  // Determine which column to sort by
-  const sortColumn =
-    sortBy === "name"
-      ? posts.name
-      : sortBy === "rating"
-      ? posts.rating
-      : posts.createdAt;
-
-  // Base query
-  const results = query
-    ? await db
-        .select()
-        .from(posts)
-        .where(ilike(posts.name, `%${query}%`))
-        .orderBy(sortDirection(sortColumn))
-    : await db.select().from(posts).orderBy(sortDirection(sortColumn));
-
-  return NextResponse.json(results);
+  return NextResponse.json({ success: true });
 }

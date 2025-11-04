@@ -6,13 +6,24 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const report = await createMonthlyReport({
       departmentId: body.departmentId,
-      projectName: body.projectName,
       existingProjectId: body.existingProjectId,
+      projectName: body.projectName,
+      startDate: body.startDate,
+      projectedEndDate: body.projectedEndDate,
       issueId: body.issueId,
       scheduleId: body.scheduleId,
       newIssue: body.newIssue,
       newSchedule: body.newSchedule,
-      reportData: body.reportData,
+      approvedBudget: body.approvedBudget,
+      totalSpent: body.totalSpent,
+      expectedFeatures: body.expectedFeatures,
+      completedFeatures: body.completedFeatures,
+      observations: body.observations,
+      summary: body.summary,
+      report_description: body.report_description,
+      projectPhase: body.projectPhase,
+      projectHealth: body.projectHealth,
+      status: body.status,
     });
 
     return NextResponse.json(report);
