@@ -1,5 +1,4 @@
-
-// Hawai‘i ETS Website Layout with Editable Paths
+// Hawai‘i ETS Website Layout
 import '~/styles/globals.css'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
@@ -12,14 +11,49 @@ export const metadata: Metadata = {
   description: 'Enterprise Technology Services – State of Hawai‘i',
 }
 
-// Nav location 
-const navItems = [
-  { name: 'Homepage', path: '/' },
-  { name: 'Projects', path: '/' },
-  { name: 'Reports', path: '/monthlyreports' },
-  { name: 'Login', path: '/login' },
-]
+// USER ROLE SECTION 
+// connects to login system.
+const userRole: 'guest' | 'public' | 'vendor' | 'admin' = 'guest'
 
+// NAVIGATION CONFIG
+const navConfig = {
+  // Not logged in
+  guest: [
+    { name: 'Homepage', path: '/' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Reports', path: '/monthlyreports' },
+    { name: 'Login', path: '/login' },
+  ],
+
+  // Logged in as a regular public user
+  public: [
+    { name: 'Homepage', path: '/' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Reports', path: '/monthlyreports' },
+    { name: 'My Account', path: '/account' },
+    { name: 'Logout', path: '/logout' },
+  ],
+
+  // Logged in as a vendor
+  vendor: [
+    { name: 'Homepage', path: '/' },
+    { name: 'My Projects', path: '/vendor-projects' },
+    { name: 'Submit Report', path: '/vendor/submit' },
+    { name: 'Support', path: '/support' },
+    { name: 'Logout', path: '/logout' },
+  ],
+
+  // Logged in as government or admin
+  admin: [
+    { name: 'Dashboard', path: '/admin/dashboard' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Vendors', path: '/admin/vendors' },
+    { name: 'Reports', path: '/monthlyreports' },
+    { name: 'Logout', path: '/logout' },
+  ],
+}
+
+// HEADER 
 function Header() {
   return (
     <header
@@ -31,7 +65,7 @@ function Header() {
       }}
     >
       <div className="max-w-[2250px] mx-auto flex items-center justify-between px-10 py-5">
-        {/* Logo and title */}
+        {/* ETS Logo and Site Title  */}
         <div className="flex items-center gap-3">
           <img
             src="https://lq4he0tkzv.ufs.sh/f/0EzP3waMS4PR39jxiXn6iEPtmsdYQDK9wLB50rhIX7jqeSH1"
@@ -43,15 +77,21 @@ function Header() {
           </h1>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Links */}
         <Navigation />
       </div>
-      <div className="h-[4px] w-full bg-[#006D68]"></div>
+
+      {/* Small divider bar under header */}
+      <div className="h-[4px] w-full bg-[#006D68]" />
     </header>
   )
 }
 
+// NAVIGATION BAR 
+// This automatically changes based on the userRole above.
 function Navigation() {
+  const navItems = navConfig[userRole] // picks the correct menu for this role
+
   return (
     <nav className="flex items-center gap-8 text-sm font-medium">
       {navItems.map((item) => (
@@ -60,9 +100,9 @@ function Navigation() {
           href={item.path}
           className="relative group text-white hover:text-gray-100 transition-all duration-300"
         >
-          {/* Page name */}
           {item.name}
-          {/* Underline hover effect */}
+
+          {/* The underline animation when hovered */}
           <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full"></span>
         </Link>
       ))}
@@ -70,41 +110,35 @@ function Navigation() {
   )
 }
 
+// FOOTER 
 function Footer() {
   return (
     <footer
       className="text-center py-6 text-sm border-t border-[#2FB8AC] mt-auto"
       style={{ backgroundColor: '#002C3E', color: '#FFFFFF' }}
     >
-      <p>
-        © {new Date().getFullYear()} State of Hawai‘i — Enterprise Technology Services
-      </p>
+      <p>© {new Date().getFullYear()} State of Hawai‘i — Enterprise Technology Services</p>
     </footer>
   )
 }
 
+// MAIN LAYOUT
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geist.className} min-h-screen flex flex-col bg-[#F5F7F8] text-[#002C3E]`}
-      >
-        {/* Header always stays */}
+      <body className={`${geist.className} min-h-screen flex flex-col bg-[#F5F7F8] text-[#002C3E]`}>
+        {/* Always shows at the top */}
         <Header />
 
-        {/* Spacer for fixed header */}
+        {/* Spacer for fixed header*/}
         <div className="h-[100px]" />
 
-        {/* This is where your page content will load */}
-        <main className="flex-grow max-w-[1250px] mx-auto px-10 py-10">
-          {children}
-        </main>
+          
+        <main className="flex-grow max-w-[1250px] mx-auto px-10 py-10">{children}</main>
 
-        {/* Footer always stays */}
+        {/* Always shows at the bottom */}
         <Footer />
       </body>
     </html>
   )
 }
-
-
