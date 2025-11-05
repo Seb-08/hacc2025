@@ -3,6 +3,8 @@
 import '~/styles/globals.css'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
+import NotificationBell from './notificationbell'
+
 
 const geist = Geist({ subsets: ['latin'], display: 'swap' })
 
@@ -39,6 +41,7 @@ function Header() {
 
         {/* Navigation links */}
         <Navigation />
+        <NotificationBell  />
       </div>
       <div className="h-[4px] w-full bg-[#006D68]"></div>
     </header>
