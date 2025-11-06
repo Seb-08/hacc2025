@@ -1,23 +1,25 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ReportDraftProvider } from '~/components/report-draft-provider';
 import ReportFormShell from '~/components/report-form-shell';
 
 export default function FormLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const search = useSearchParams();
 
-  // Check if the current route is the landing page (/form)
+  // check current route
   const isLandingPage = pathname === '/form';
 
-  // Skip provider + sidebar on the landing page
-  if (isLandingPage) {
-    return <>{children}</>;
-  }
+  // extract ?id from query string
+  const id = search?.get('id');
 
-  // Use shared provider and shell for all other form pages
+  // skip provider/shell on landing page
+  if (isLandingPage) return <>{children}</>;
+
+  // pass reportId to provider for auto-loading existing reports
   return (
-    <ReportDraftProvider>
+    <ReportDraftProvider reportId={id ?? undefined}>
       <ReportFormShell>{children}</ReportFormShell>
     </ReportDraftProvider>
   );
