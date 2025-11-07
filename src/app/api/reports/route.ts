@@ -1,19 +1,33 @@
-// src/app/api/reports/route.ts
 import { NextResponse } from "next/server";
 import { db } from "~/server/db";
-import { reports } from "~/server/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { reports, reportSnapshots } from "~/server/db/schema";
+import { eq, and, exists } from "drizzle-orm";
 
 /**
- * GET: Return all latest reports (for landing page)
+ * GET: Return all latest reports that have at least one approved snapshot
  */
 export async function GET() {
   try {
     const allReports = await db
       .select()
       .from(reports)
-      .where(eq(reports.isLatest, true))
-      .orderBy(desc(reports.createdAt)); // ✅ show newest first
+      .where(
+        and(
+          eq(reports.isLatest, true),
+          exists(
+            db
+              .select({ id: reportSnapshots.id })
+              .from(reportSnapshots)
+              .where(
+                and(
+                  eq(reportSnapshots.reportId, reports.id),
+                  eq(reportSnapshots.status, "approved") // ✅ must have approved snapshot
+                )
+              )
+          )
+        )
+      )
+      .orderBy(reports.createdAt);
 
     return NextResponse.json(allReports);
   } catch (err) {
@@ -26,7 +40,7 @@ export async function GET() {
 }
 
 /**
- * POST: Create a new report
+ * POST: Create a new report (unchanged)
  */
 export async function POST(req: Request) {
   try {
