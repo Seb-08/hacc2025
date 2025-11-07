@@ -15,6 +15,7 @@ import { relations } from "drizzle-orm";
 // ---------- ENUMS ----------
 export const riskLevelEnum = pgEnum("risk_level", ["low", "medium", "high"]);
 export const statusEnum = pgEnum("status", ["open", "closed"]);
+export const userRoleEnum = pgEnum("user_role", ["public", "vendor", "admin"]);
 
 // NEW: Snapshot moderation status
 export const snapshotStatusEnum = pgEnum("snapshot_status", [
@@ -102,12 +103,20 @@ export const reportSnapshots = pgTable("report_snapshots", {
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
 
-  // 🟡 New: status column (pending / approved / denied)
   status: snapshotStatusEnum("status").notNull().default("pending"),
 
-  // 🟡 New: approvedAt column (only set when approved)
   approvedAt: timestamp("approved_at"),
 });
+
+// ---------- USERS TABLE ----------
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: userRoleEnum("role").notNull().default("vendor"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ---------- RELATIONS ----------
 
 export const reportRelations = relations(reports, ({ many }) => ({

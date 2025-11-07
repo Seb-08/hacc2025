@@ -1,26 +1,19 @@
-'use client';
+// src/app/form/layout.tsx
+import { redirect } from 'next/navigation';
+import { getCurrentUser } from '~/lib/auth';
+import type { ReactNode } from 'react';
+import FormLayoutClient from './FormLayoutClient';
 
-import { usePathname, useSearchParams } from 'next/navigation';
-import { ReportDraftProvider } from '~/components/report-draft-provider';
-import ReportFormShell from '~/components/report-form-shell';
+export default async function FormLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const user = await getCurrentUser();
 
-export default function FormLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const search = useSearchParams();
+  if (!user || (user.role !== 'vendor' && user.role !== 'admin')) {
+    redirect('/');
+  }
 
-  // check current route
-  const isLandingPage = pathname === '/form';
-
-  // extract ?id from query string
-  const id = search?.get('id');
-
-  // skip provider/shell on landing page
-  if (isLandingPage) return <>{children}</>;
-
-  // pass reportId to provider for auto-loading existing reports
-  return (
-    <ReportDraftProvider reportId={id ?? undefined}>
-      <ReportFormShell>{children}</ReportFormShell>
-    </ReportDraftProvider>
-  );
+  return <FormLayoutClient>{children}</FormLayoutClient>;
 }
