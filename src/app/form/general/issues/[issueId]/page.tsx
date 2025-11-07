@@ -1,3 +1,4 @@
+// src/app/form/general/issues/[issueId]/page.tsx
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -6,25 +7,26 @@ import { useReportDraft } from '~/components/report-draft-provider';
 export default function IssuePage() {
   const params = useParams();
 
-  // Ensure the param is always a string, never undefined
-  const raw = Array.isArray(params?.issueId)
-    ? params.issueId[0]
-    : params?.issueId;
-
-// always end up with a string
+  // Always ensure a string param
+  const raw = Array.isArray(params?.issueId) ? params.issueId[0] : params?.issueId;
   const issueId = raw ?? '';
 
-  return <IssueInner issueId={issueId} />;
+  return <IssueInner issueIndexParam={issueId} />;
 }
 
-function IssueInner({ issueId }: { issueId: string }) {
+function IssueInner({ issueIndexParam }: { issueIndexParam: string }) {
   const router = useRouter();
-  const { draft, setDraft } = useReportDraft();
+  const { draft, setDraft, isLoading } = useReportDraft();
 
-  const idx = draft.issues.findIndex((i, n) =>
-    i.id ? i.id.toString() === issueId : n.toString() === issueId
-  );
-  const issue = draft.issues[idx];
+  // Side-nav and list both use index in the href (/issues/${idx})
+  const idx = Number(issueIndexParam);
+  const idxValid = Number.isInteger(idx) && idx >= 0;
+
+  // Wait until provider loads the draft before checking
+  if (isLoading) return <p>Loading issue…</p>;
+  if (!idxValid || idx >= draft.issues.length) return <p>Issue not found.</p>;
+
+  const issue = draft.issues[idx]!; // Non-null after validation
 
   function update(field: string, value: any) {
     setDraft((d) => {
@@ -34,11 +36,9 @@ function IssueInner({ issueId }: { issueId: string }) {
     });
   }
 
-  if (!issue) return <p>Issue not found.</p>;
-
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Edit Issue</h1>
+      <h1 className="text-2xl font-semibold">Edit Issue {idx + 1}</h1>
       <p className="text-gray-600 mt-1">Update details for this specific issue.</p>
 
       <div className="grid md:grid-cols-2 gap-4 mt-6">
@@ -76,6 +76,7 @@ function IssueInner({ issueId }: { issueId: string }) {
                 <option value="high">High</option>
               </select>
             </div>
+
             <div>
               <label className="text-xs font-medium">Likelihood</label>
               <select
@@ -90,6 +91,7 @@ function IssueInner({ issueId }: { issueId: string }) {
                 <option value="high">High</option>
               </select>
             </div>
+
             <div>
               <label className="text-xs font-medium">Overall Risk (0–10)</label>
               <input
@@ -128,15 +130,10 @@ function IssueInner({ issueId }: { issueId: string }) {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-between">
+      {/* ✅ Only one "Done" button now */}
+      <div className="mt-8 flex justify-end">
         <button
           onClick={() => router.push('/form/general/issues')}
-          className="px-4 py-2 rounded-lg border"
-        >
-          Back
-        </button>
-        <button
-          onClick={() => router.push('/form/general/appendix')}
           className="px-4 py-2 rounded-lg text-white"
           style={{ background: 'linear-gradient(90deg, #00796B, #2FB8AC)' }}
         >

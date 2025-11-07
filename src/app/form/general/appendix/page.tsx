@@ -1,3 +1,4 @@
+// src/app/form/general/appendix/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -5,7 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useReportDraft } from '~/components/report-draft-provider';
 
 export default function AppendixPage() {
-  const { draft, setDraft } = useReportDraft();
+  const {
+    draft,
+    setDraft,
+    deletedScheduleIds,        // 🆕 from context
+    clearDeletedScheduleIds,   // 🆕 from context
+  } = useReportDraft();
+
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string>('');
@@ -20,95 +27,96 @@ export default function AppendixPage() {
     try {
       let reportId = draft.general.id;
 
-      // 1️⃣ Create or update the report base
+      // 1) Create or update the base report
       if (!reportId) {
         const res = await fetch('/api/reports', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: draft.general.name,
-            department: draft.general.department,
-            startDate: draft.general.startDate,
-          }),
+          body: JSON.stringify(draft.general),
         });
         if (!res.ok) throw new Error('Failed to create report');
         const created = await res.json();
         reportId = created.id;
       } else {
-        await fetch(`/api/reports/${reportId}`, {
+        const res = await fetch(`/api/reports/${reportId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: draft.general.name,
-            department: draft.general.department,
-            startDate: draft.general.startDate,
-          }),
+          body: JSON.stringify(draft.general),
         });
+        if (!res.ok) throw new Error('Failed to update report');
       }
 
-      // 2️⃣ Upsert issues
+      // 🗑️ 2) Delete removed milestones FIRST (so they don't get resurrected)
+      for (const id of deletedScheduleIds) {
+        const delRes = await fetch(`/api/reports/${reportId}/scope-schedule`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+        });
+        if (!delRes.ok) throw new Error('Failed to delete a milestone');
+      }
+
+      // 3) Upsert issues
       for (const issue of draft.issues) {
         const method = issue.id ? 'PUT' : 'POST';
-        const endpoint = issue.id
-          ? `/api/reports/${reportId}/issues/${issue.id}`
-          : `/api/reports/${reportId}/issues`;
-        await fetch(endpoint, {
+        const endpoint = `/api/reports/${reportId}/issues`;
+        const res = await fetch(endpoint, {
           method,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(issue),
+          body: JSON.stringify({ ...issue, reportId }),
         });
+        if (!res.ok) throw new Error('Failed to save issue');
       }
 
-      // 3️⃣ Upsert schedule & scope
+      // 4) Upsert schedule & scope
       for (const row of draft.scheduleScope) {
         const method = row.id ? 'PUT' : 'POST';
-        const endpoint = row.id
-          ? `/api/reports/${reportId}/scope-schedule/${row.id}`
-          : `/api/reports/${reportId}/scope-schedule`;
-        await fetch(endpoint, {
+        const endpoint = `/api/reports/${reportId}/scope-schedule`;
+        const res = await fetch(endpoint, {
           method,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(row),
+          body: JSON.stringify({ ...row, reportId }),
         });
+        if (!res.ok) throw new Error('Failed to save schedule/scope');
       }
 
-      // 4️⃣ Upsert financials
+      // 5) Upsert financials
       if (draft.financial) {
         const body = {
+          ...draft.financial,
+          reportId,
           originalContractAmt: Number(draft.financial.originalContractAmt ?? 0),
           paidToDate: Number(draft.financial.paidToDate ?? 0),
         };
         const method = draft.financial.id ? 'PUT' : 'POST';
-        const endpoint = draft.financial.id
-          ? `/api/reports/${reportId}/financials/${draft.financial.id}`
-          : `/api/reports/${reportId}/financials`;
-        await fetch(endpoint, {
+        const endpoint = `/api/reports/${reportId}/financials`;
+        const res = await fetch(endpoint, {
           method,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
+        if (!res.ok) throw new Error('Failed to save financials');
       }
 
-      // 5️⃣ Upsert appendix
-      const body = { content: draft.appendix?.content ?? '' };
+      // 6) Upsert appendix
+      const appendixBody = { ...draft.appendix, reportId, content: draft.appendix?.content ?? '' };
       const method = draft.appendix?.id ? 'PUT' : 'POST';
-      const endpoint = draft.appendix?.id
-        ? `/api/reports/${reportId}/appendix/${draft.appendix.id}`
-        : `/api/reports/${reportId}/appendix`;
-      await fetch(endpoint, {
+      const endpoint = `/api/reports/${reportId}/appendix`;
+      const res = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify(appendixBody),
       });
+      if (!res.ok) throw new Error('Failed to save appendix');
 
-      // 6️⃣ Save snapshot/version
-      const snap = await fetch(`/api/reports/${reportId}/submit`, {
-        method: 'POST',
-      });
+      // 7) Snapshot
+      const snap = await fetch(`/api/reports/${reportId}/submit`, { method: 'POST' });
       if (!snap.ok) throw new Error('Failed to snapshot report');
 
+      // 🎉 success — clear pending deletions
+      clearDeletedScheduleIds();
+
       setMsg('✅ Report submitted and version snapshot saved');
-      // router.push(`/reports/${reportId}`) // optional
     } catch (e: any) {
       setMsg(e?.message ?? 'Submission failed');
     } finally {
@@ -137,10 +145,7 @@ export default function AppendixPage() {
       {msg && <p className="mt-4 text-sm">{msg}</p>}
 
       <div className="mt-8 flex justify-between">
-        <button
-          onClick={() => router.back()}
-          className="px-4 py-2 rounded-lg border"
-        >
+        <button onClick={() => router.back()} className="px-4 py-2 rounded-lg border">
           Back
         </button>
         <button

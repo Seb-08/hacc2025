@@ -1,3 +1,4 @@
+// src/app/form/general/schedule/page.tsx
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -5,28 +6,43 @@ import { useReportDraft } from '~/components/report-draft-provider';
 import { useState } from 'react';
 
 export default function SchedulePage() {
-  const { draft, setDraft } = useReportDraft();
+  const { draft, setDraft, addDeletedScheduleId } = useReportDraft();
   const router = useRouter();
 
   const [newTask, setNewTask] = useState('');
-  const [newStart, setNewStart] = useState('');
-  const [newEnd, setNewEnd] = useState('');
-  const [newCompletion, setNewCompletion] = useState(0);
+  const [newTarget, setNewTarget] = useState('');
+  const [newCompletion, setNewCompletion] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
   function addScheduleItem() {
-    if (!newTask.trim()) return;
+    setErrorMsg('');
+
+    if (!newTask.trim()) {
+      setErrorMsg('Please enter a task name.');
+      return;
+    }
+
+    const completionValue = newCompletion === '' ? 0 : Number(newCompletion);
+    if (completionValue > 100) {
+      setErrorMsg('Completion percentage cannot exceed 100%.');
+      return;
+    }
+    if (completionValue < 0) {
+      setErrorMsg('Completion percentage cannot be negative.');
+      return;
+    }
+
     const newItem = {
       task: newTask,
-      startDate: newStart,
-      endDate: newEnd,
-      completionPercent: newCompletion,
+      targetDate: newTarget,
+      completionPercent: completionValue,
       notes: '',
     };
+
     setDraft((d) => ({ ...d, scheduleScope: [...d.scheduleScope, newItem] }));
     setNewTask('');
-    setNewStart('');
-    setNewEnd('');
-    setNewCompletion(0);
+    setNewTarget('');
+    setNewCompletion('');
   }
 
   function updateSchedule(idx: number, field: string, value: any) {
@@ -37,45 +53,72 @@ export default function SchedulePage() {
     });
   }
 
+  function deleteScheduleItem(idx: number) {
+    let removedId: number | null = null;
+
+    setDraft((d) => {
+      const copy = [...d.scheduleScope];
+      const removed = copy.splice(idx, 1)[0];
+      if (removed && typeof removed.id === 'number') {
+        removedId = removed.id;
+      }
+      return { ...d, scheduleScope: copy };
+    });
+
+    if (removedId !== null) {
+      addDeletedScheduleId(removedId);
+    }
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-semibold">Schedule & Scope</h1>
       <p className="text-gray-600 mt-1">
-        Add project milestones, completion progress, and schedule targets.
+        Add project milestones, target dates, and progress updates.
       </p>
 
       {/* Add new milestone */}
       <div className="mt-6 border rounded-lg p-4 bg-gray-50">
         <h2 className="text-lg font-medium mb-3">Add New Milestone</h2>
-        <div className="grid md:grid-cols-4 gap-4">
-          <input
-            className="border rounded-lg px-3 py-2"
-            placeholder="Task name"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-          />
-          <input
-            type="date"
-            className="border rounded-lg px-3 py-2"
-            value={newStart}
-            onChange={(e) => setNewStart(e.target.value)}
-          />
-          <input
-            type="date"
-            className="border rounded-lg px-3 py-2"
-            value={newEnd}
-            onChange={(e) => setNewEnd(e.target.value)}
-          />
-          <input
-            type="number"
-            min={0}
-            max={100}
-            className="border rounded-lg px-3 py-2"
-            value={newCompletion}
-            onChange={(e) => setNewCompletion(Number(e.target.value))}
-            placeholder="% complete"
-          />
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <label className="text-sm font-medium">Task</label>
+            <input
+              className="border rounded-lg px-3 py-2 w-full mt-1"
+              placeholder="Task name"
+              value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Target Date</label>
+            <input
+              type="date"
+              className="border rounded-lg px-3 py-2 w-full mt-1"
+              value={newTarget}
+              onChange={(e) => setNewTarget(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Completion (%)</label>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              className="border rounded-lg px-3 py-2 w-full mt-1"
+              value={newCompletion}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^\d{0,3}$/.test(val)) setNewCompletion(val);
+              }}
+              placeholder="0–100"
+            />
+          </div>
         </div>
+
+        {errorMsg && <p className="text-red-600 text-sm mt-2">{errorMsg}</p>}
 
         <button
           onClick={addScheduleItem}
@@ -94,52 +137,66 @@ export default function SchedulePage() {
         )}
         <div className="space-y-4">
           {draft.scheduleScope.map((item, idx) => (
-            <div
-              key={idx}
-              className="border rounded-lg p-4 flex flex-col gap-3 bg-white shadow-sm"
-            >
-              <input
-                className="border rounded-lg px-3 py-2"
-                value={item.task ?? ''}
-                onChange={(e) => updateSchedule(idx, 'task', e.target.value)}
-                placeholder="Milestone name"
-              />
-              <div className="grid md:grid-cols-3 gap-3">
-                <input
-                  type="date"
-                  className="border rounded-lg px-3 py-2"
-                  value={item.startDate ?? ''}
-                  onChange={(e) =>
-                    updateSchedule(idx, 'startDate', e.target.value)
-                  }
-                />
-                <input
-                  type="date"
-                  className="border rounded-lg px-3 py-2"
-                  value={item.endDate ?? ''}
-                  onChange={(e) =>
-                    updateSchedule(idx, 'endDate', e.target.value)
-                  }
-                />
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  className="border rounded-lg px-3 py-2"
-                  value={item.completionPercent ?? 0}
-                  onChange={(e) =>
-                    updateSchedule(idx, 'completionPercent', Number(e.target.value))
-                  }
-                  placeholder="% complete"
+            <div key={idx} className="border rounded-lg p-4 bg-white shadow-sm flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <div className="flex-1">
+                  <label className="text-sm font-medium">Task</label>
+                  <input
+                    className="border rounded-lg px-3 py-2 w-full mt-1"
+                    value={item.task ?? ''}
+                    onChange={(e) => updateSchedule(idx, 'task', e.target.value)}
+                    placeholder="Milestone name"
+                  />
+                </div>
+                <button
+                  onClick={() => deleteScheduleItem(idx)}
+                  className="ml-3 text-sm text-red-600 hover:underline"
+                >
+                  Delete
+                </button>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium">Target Date</label>
+                  <input
+                    type="date"
+                    className="border rounded-lg px-3 py-2 w-full mt-1"
+                    value={item.targetDate ?? ''}
+                    onChange={(e) => updateSchedule(idx, 'targetDate', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Completion (%)</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="border rounded-lg px-3 py-2 w-full mt-1"
+                    value={item.completionPercent?.toString() ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (/^\d{0,3}$/.test(val)) {
+                        const num = val === '' ? 0 : Number(val);
+                        if (num <= 100) updateSchedule(idx, 'completionPercent', num);
+                      }
+                    }}
+                    placeholder="0–100"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Notes</label>
+                <textarea
+                  rows={2}
+                  className="border rounded-lg px-3 py-2 w-full mt-1"
+                  value={item.notes ?? ''}
+                  onChange={(e) => updateSchedule(idx, 'notes', e.target.value)}
+                  placeholder="Notes"
                 />
               </div>
-              <textarea
-                rows={2}
-                className="border rounded-lg px-3 py-2"
-                value={item.notes ?? ''}
-                onChange={(e) => updateSchedule(idx, 'notes', e.target.value)}
-                placeholder="Notes"
-              />
             </div>
           ))}
         </div>
@@ -147,10 +204,7 @@ export default function SchedulePage() {
 
       {/* Navigation */}
       <div className="mt-8 flex justify-between">
-        <button
-          onClick={() => router.push('/form/general/issues')}
-          className="px-4 py-2 rounded-lg border"
-        >
+        <button onClick={() => router.push('/form/general/issues')} className="px-4 py-2 rounded-lg border">
           Back to Issues
         </button>
         <button

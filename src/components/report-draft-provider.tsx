@@ -1,8 +1,9 @@
+// src/components/report-draft-provider.tsx
 'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-// ---- Types (loosened to fix TS2322 errors) ----
+// ---- Types ----
 type DraftIssue = {
   id?: number;
   description?: string;
@@ -17,8 +18,7 @@ type DraftIssue = {
 type DraftSchedule = {
   id?: number;
   task?: string;
-  startDate?: string;
-  endDate?: string;
+  targetDate?: string; // unified field
   completionPercent?: number;
   notes?: string;
 };
@@ -54,6 +54,11 @@ type Ctx = {
   setDraft: React.Dispatch<React.SetStateAction<ReportDraft>>;
   loadExisting: (id: number | string) => Promise<void>;
   isLoading: boolean;
+
+  // 🆕 shared deletion tracking for schedule/scope milestones
+  deletedScheduleIds: number[];
+  addDeletedScheduleId: (id: number) => void;
+  clearDeletedScheduleIds: () => void;
 };
 
 // ---- Context ----
@@ -82,6 +87,12 @@ export function ReportDraftProvider({
     appendix: undefined,
   });
 
+  // 🆕 deleted milestone IDs live here so all pages can access them
+  const [deletedScheduleIds, setDeletedScheduleIds] = useState<number[]>([]);
+  const addDeletedScheduleId = (id: number) =>
+    setDeletedScheduleIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  const clearDeletedScheduleIds = () => setDeletedScheduleIds([]);
+
   async function loadExisting(id: number | string) {
     setIsLoading(true);
     try {
@@ -109,8 +120,7 @@ export function ReportDraftProvider({
         scheduleScope: (data.scheduleScope ?? []).map((s: any) => ({
           id: s.id,
           task: s.task ?? '',
-          startDate: s.startDate ?? '',
-          endDate: s.endDate ?? '',
+          targetDate: s.targetDate ?? '',
           completionPercent: Number(s.completionPercent ?? 0),
           notes: s.notes ?? '',
         })),
@@ -127,6 +137,9 @@ export function ReportDraftProvider({
             content: data.appendix[0].content ?? '',
           },
       });
+
+      // When loading an existing report, clear any pending deletions
+      setDeletedScheduleIds([]);
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +150,18 @@ export function ReportDraftProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportId]);
 
-  const value = useMemo(() => ({ draft, setDraft, loadExisting, isLoading }), [draft, isLoading]);
+  const value: Ctx = useMemo(
+    () => ({
+      draft,
+      setDraft,
+      loadExisting,
+      isLoading,
+      deletedScheduleIds,
+      addDeletedScheduleId,
+      clearDeletedScheduleIds,
+    }),
+    [draft, isLoading, deletedScheduleIds],
+  );
 
   return <ReportDraftContext.Provider value={value}>{children}</ReportDraftContext.Provider>;
 }

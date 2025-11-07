@@ -16,7 +16,7 @@ type DraftIssue = {
 };
 
 export default function IssuesPage() {
-  const { draft, setDraft } = useReportDraft();
+  const { draft, setDraft, isLoading } = useReportDraft();
   const router = useRouter();
 
   function createNewIssue() {
@@ -30,15 +30,19 @@ export default function IssuesPage() {
         recommendation: '',
         status: 'open',
       };
-      // Cast to keep TS happy that the shape is identical
+
       const updated = { ...prev, issues: [...prev.issues, newIssue] } as typeof prev;
 
-      // Route after state is queued
+      // Route after state is queued; always use INDEX
       const newIndex = updated.issues.length - 1;
       setTimeout(() => router.push(`/form/general/issues/${newIndex}`), 0);
 
       return updated;
     });
+  }
+
+  if (isLoading) {
+    return <p className="text-gray-600">Loading issues…</p>;
   }
 
   return (
@@ -59,13 +63,15 @@ export default function IssuesPage() {
 
       <div className="mt-4 grid gap-3">
         {draft.issues.length === 0 && (
-          <p className="text-sm text-gray-600">No issues yet. Click “Add Issue” to create one.</p>
+          <p className="text-sm text-gray-600">
+            No issues yet. Click “Add Issue” to create one.
+          </p>
         )}
 
         {draft.issues.map((issue, idx) => (
           <button
             key={issue.id ?? idx}
-            onClick={() => router.push(`/form/general/issues/${issue.id ?? idx}`)}
+            onClick={() => router.push(`/form/general/issues/${idx}`)} // ✅ fixed bracket
             className="w-full text-left border rounded-lg p-3 hover:bg-gray-50 transition"
           >
             <h3 className="font-medium">

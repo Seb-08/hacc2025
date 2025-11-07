@@ -2,10 +2,10 @@
 import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { reports } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 /**
- * GET: Return all latest reports
+ * GET: Return all latest reports (for landing page)
  */
 export async function GET() {
   try {
@@ -13,12 +13,15 @@ export async function GET() {
       .select()
       .from(reports)
       .where(eq(reports.isLatest, true))
-      .orderBy(reports.createdAt);
+      .orderBy(desc(reports.createdAt)); // ✅ show newest first
 
     return NextResponse.json(allReports);
   } catch (err) {
     console.error("GET /api/reports error:", err);
-    return NextResponse.json({ error: "Failed to fetch reports" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch reports" },
+      { status: 500 }
+    );
   }
 }
 
@@ -29,7 +32,7 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    const newReport = await db
+    const [newReport] = await db
       .insert(reports)
       .values({
         name: data.name,
@@ -38,9 +41,12 @@ export async function POST(req: Request) {
       })
       .returning();
 
-    return NextResponse.json(newReport[0]);
+    return NextResponse.json(newReport);
   } catch (err) {
     console.error("POST /api/reports error:", err);
-    return NextResponse.json({ error: "Failed to create report" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create report" },
+      { status: 500 }
+    );
   }
 }
