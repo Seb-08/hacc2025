@@ -2,15 +2,32 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Calendar, DollarSign, FileText, Flag, ClipboardList } from 'lucide-react';
+import {
+  Calendar,
+  DollarSign,
+  FileText,
+  Flag,
+  ClipboardList,
+  Sparkles,
+  CheckCircle2,
+} from 'lucide-react';
 import { Bar } from 'react-chartjs-2';
 import type { ChartData, ChartOptions } from 'chart.js';
 import '~/lib/chartSetup';
 
+// Matches your DB snapshot shape
 type Snapshot = {
   id: number;
+  reportId: number;
   snapshotData: string;
   createdAt: string;
+  status: 'pending' | 'approved' | 'denied';
+
+  // Signature metadata from schema
+  signatureName?: string | null;
+  signatureMethod?: string | null;
+  signatureUrl?: string | null;
+  approvedAt?: string | null;
 };
 
 type FullReport = {
@@ -39,36 +56,46 @@ function formatDate(dateStr?: string | null) {
 export default function ReportViewPage() {
   const params = useParams();
   const router = useRouter();
-
-  // params.id comes from /reports/view/[id]
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [selectedSnapshot, setSelectedSnapshot] = useState<FullReport | null>(null);
+  const [selectedSnapshotId, setSelectedSnapshotId] = useState<number | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Load all snapshots for this report
+  // AI summary state
+  const [summary, setSummary] = useState<string>('');
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState('');
+
+  // 1️⃣ Load approved snapshots
   useEffect(() => {
     async function loadSnapshots() {
       try {
-        if (!id) {
-          throw new Error('Missing report ID in URL.');
-        }
+        if (!id) throw new Error('Missing report ID in URL.');
 
-        const res = await fetch(`/api/reports/${id}/snapshots`, { cache: 'no-store' });
+        const res = await fetch(`/api/reports/${id}/snapshots`, {
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error('Failed to fetch snapshots');
 
         const allSnaps: Snapshot[] = await res.json();
-        setSnapshots(allSnaps);
 
-        // Use latest snapshot by createdAt desc (API already sorted, but safe-guard)
-        const latest = allSnaps[0];
+        // Ensure only approved snapshots are used
+        const approved = allSnaps.filter((s) => s.status === 'approved');
+
+        setSnapshots(approved);
+
+        const latest = approved[0];
         if (latest) {
           const parsed = JSON.parse(latest.snapshotData);
           setSelectedSnapshot(parsed);
+          setSelectedSnapshotId(latest.id);
         } else {
           setSelectedSnapshot(null);
+          setSelectedSnapshotId(null);
         }
       } catch (err: any) {
         console.error(err);
@@ -78,15 +105,56 @@ export default function ReportViewPage() {
       }
     }
 
-    loadSnapshots();
+    void loadSnapshots();
   }, [id]);
+
+  // 2️⃣ Generate AI summary for the report using reportId
+  useEffect(() => {
+    async function generateSummary() {
+      if (!id) return;
+      if (!selectedSnapshot) {
+        setSummary('');
+        return;
+      }
+
+      setSummaryLoading(true);
+      setSummaryError('');
+
+      try {
+        const res = await fetch('/api/ai/summary', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reportId: Number(id) }),
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.summary) {
+          throw new Error(data.error || 'Failed to generate summary');
+        }
+
+        setSummary(data.summary);
+      } catch (err: any) {
+        console.error('AI summary error:', err);
+        setSummaryError(
+          'AI summary is not available at this time. Please review the report details below.',
+        );
+        setSummary('');
+      } finally {
+        setSummaryLoading(false);
+      }
+    }
+
+    void generateSummary();
+  }, [id, selectedSnapshot]);
 
   const handleSnapshotSelect = (snapshotId: number) => {
     const snap = snapshots.find((s) => s.id === snapshotId);
     if (!snap) return;
+
     try {
       const parsed = JSON.parse(snap.snapshotData);
       setSelectedSnapshot(parsed);
+      setSelectedSnapshotId(snap.id);
     } catch (err) {
       console.error(err);
       setError('Error parsing snapshot data.');
@@ -102,7 +170,11 @@ export default function ReportViewPage() {
   }
 
   if (!selectedSnapshot) {
-    return <p className="p-6 text-gray-600">No snapshot data found.</p>;
+    return (
+      <p className="p-6 text-gray-600">
+        No approved snapshot is currently available for this report.
+      </p>
+    );
   }
 
   const {
@@ -116,10 +188,15 @@ export default function ReportViewPage() {
     submittedAt,
   } = selectedSnapshot;
 
-  // Financial data
   const financialData = financials[0];
 
-  // Compute chart data without hooks to avoid hook-order issues
+  // Active snapshot meta (for signature and date)
+  const activeSnapshot =
+    (selectedSnapshotId &&
+      snapshots.find((s) => s.id === selectedSnapshotId)) ||
+    snapshots[0];
+
+  // Chart data (no hooks)
   const chartData: ChartData<'bar'> | null = financialData
     ? {
         labels: ['Original Contract', 'Paid to Date'],
@@ -156,22 +233,39 @@ export default function ReportViewPage() {
     },
   };
 
-  // Determine which snapshot date to show as "Snapshot Taken"
-  const currentSnapshotDate =
-    snapshots.find((s) => {
-      try {
-        const parsed = JSON.parse(s.snapshotData);
-        return parsed.submittedAt === submittedAt;
-      } catch {
-        return false;
-      }
-    })?.createdAt ?? submittedAt ?? '';
+  const snapshotTakenDate =
+    activeSnapshot?.createdAt ?? submittedAt ?? '';
 
   return (
     <div className="p-6 md:p-10 space-y-10">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      {/* 🔹 AI Summary */}
+      <div className="bg-gradient-to-r from-[#E0F7F5] to-[#F5FBFF] border border-[#B8E6E0] rounded-2xl p-4 flex gap-3 items-start shadow-sm">
+        <div className="mt-1">
+          <Sparkles className="w-5 h-5 text-[#00796B]" />
+        </div>
         <div>
+          <p className="text-xs uppercase tracking-wide text-[#00796B] font-semibold">
+            AI Overview
+          </p>
+          {summaryLoading ? (
+            <p className="text-sm text-gray-600 mt-1">
+              Generating a brief summary of this report...
+            </p>
+          ) : summaryError ? (
+            <p className="text-sm text-gray-500 mt-1">{summaryError}</p>
+          ) : summary ? (
+            <p className="text-sm text-gray-800 mt-1">{summary}</p>
+          ) : (
+            <p className="text-sm text-gray-500 mt-1">
+              Summary not available for this snapshot.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* 🔹 Header & Signature */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-800">
             {name || 'Untitled Report'}
           </h1>
@@ -181,14 +275,17 @@ export default function ReportViewPage() {
             {startDate ? formatDate(startDate) : '—'}
           </p>
 
-          {/* Snapshot Selector under general info */}
+          {/* Snapshot selector */}
           {snapshots.length > 0 && (
             <div className="mt-4">
               <label className="text-xs text-gray-600 mb-1 block">
-                📅 View older monthly reports:
+                📅 View older approved monthly reports:
               </label>
               <select
-                onChange={(e) => handleSnapshotSelect(Number(e.target.value))}
+                value={selectedSnapshotId ?? snapshots[0]?.id}
+                onChange={(e) =>
+                  handleSnapshotSelect(Number(e.target.value))
+                }
                 className="border rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-teal-500"
               >
                 {snapshots.map((snap) => (
@@ -201,17 +298,53 @@ export default function ReportViewPage() {
           )}
         </div>
 
-        <button
-          onClick={() => router.push('/reports')}
-          className="px-4 py-2 rounded-lg border text-sm hover:bg-gray-50 self-start md:self-auto"
-        >
-          Back to Reports
-        </button>
+        <div className="flex flex-col items-end gap-3">
+          <button
+            onClick={() => router.push('/reports')}
+            className="px-4 py-2 rounded-lg border text-sm hover:bg-gray-50"
+          >
+            Back to Reports
+          </button>
+
+          {/* ✅ Signature / Approval badge */}
+          {activeSnapshot?.signatureUrl && activeSnapshot.signatureName && (
+            <div className="mt-1 bg-white border border-emerald-200 rounded-xl px-3 py-2 shadow-sm flex flex-col items-end gap-1 w-[230px]">
+              <div className="flex items-center gap-1 text-emerald-700 text-[10px] font-semibold uppercase">
+                <CheckCircle2 className="w-3 h-3" />
+                Approved Snapshot
+              </div>
+              <p className="text-[10px] text-gray-500">
+                Signed by{' '}
+                <span className="font-semibold text-gray-800">
+                  {activeSnapshot.signatureName}
+                </span>
+                {activeSnapshot.approvedAt && (
+                  <>
+                    {' '}
+                    on{' '}
+                    <span className="text-gray-700">
+                      {formatDate(activeSnapshot.approvedAt)}
+                    </span>
+                  </>
+                )}
+              </p>
+              <div className="mt-1 w-full flex justify-end">
+                <div className="border border-gray-200 rounded-md bg-gray-50 p-1 max-h-[52px] max-w-[150px] overflow-hidden flex items-center justify-center">
+                  <img
+                    src={activeSnapshot.signatureUrl}
+                    alt="Approver signature"
+                    className="max-h-12 w-auto object-contain opacity-90"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Top Summary Row */}
+      {/* 🔹 Top Summary Row */}
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* General Info Card */}
+        {/* General Info */}
         <div className="p-6 rounded-xl border bg-white shadow-sm flex flex-col items-start">
           <Flag className="text-teal-600 mb-3" />
           <h2 className="font-semibold text-lg mb-1">General Information</h2>
@@ -222,11 +355,11 @@ export default function ReportViewPage() {
             Start Date: {startDate ? formatDate(startDate) : '—'}
           </p>
           <p className="text-gray-600 text-sm mt-2">
-            Snapshot Taken: {formatDate(currentSnapshotDate)}
+            Snapshot Taken: {formatDate(snapshotTakenDate)}
           </p>
         </div>
 
-        {/* Financial Summary Card (wider) */}
+        {/* Financial Summary (wide) */}
         <div className="p-6 rounded-xl border bg-white shadow-sm flex flex-col lg:col-span-2">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="text-green-600" />
@@ -235,27 +368,30 @@ export default function ReportViewPage() {
 
           {financialData ? (
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
-              {/* Text */}
               <div className="flex-1">
                 <p className="text-gray-600 text-sm mb-1">
                   Original Contract:{' '}
                   <span className="font-semibold">
-                    ${Number(financialData.originalContractAmt ?? 0).toLocaleString()}
+                    $
+                    {Number(
+                      financialData.originalContractAmt ?? 0,
+                    ).toLocaleString()}
                   </span>
                 </p>
                 <p className="text-gray-600 text-sm mb-3">
                   Paid to Date:{' '}
                   <span className="font-semibold">
-                    ${Number(financialData.paidToDate ?? 0).toLocaleString()}
+                    $
+                    {Number(
+                      financialData.paidToDate ?? 0,
+                    ).toLocaleString()}
                   </span>
                 </p>
                 <p className="text-gray-500 text-xs">
-                  This chart compares the total contract value with payments made to date,
-                  giving a quick visual of financial progress.
+                  This chart compares the total contract value with payments made
+                  to date for a quick snapshot of financial health.
                 </p>
               </div>
-
-              {/* Chart */}
               <div className="flex-1 flex items-center">
                 {chartData && (
                   <div className="w-full h-56">
@@ -270,7 +406,7 @@ export default function ReportViewPage() {
         </div>
       </div>
 
-      {/* Detailed Issues Section */}
+      {/* 🔹 Issues */}
       <div className="bg-white border rounded-xl p-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <ClipboardList className="text-indigo-600" /> All Issues
@@ -304,7 +440,7 @@ export default function ReportViewPage() {
         )}
       </div>
 
-      {/* Schedule & Scope */}
+      {/* 🔹 Schedule & Scope */}
       <div className="bg-white border rounded-xl p-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Calendar className="text-amber-600" /> Schedule & Scope
@@ -324,10 +460,15 @@ export default function ReportViewPage() {
               </thead>
               <tbody>
                 {scheduleScope.map((row: any, i: number) => (
-                  <tr key={row.id ?? i} className="border-b hover:bg-gray-50">
+                  <tr
+                    key={row.id ?? i}
+                    className="border-b hover:bg-gray-50"
+                  >
                     <td className="px-3 py-2">{row.task}</td>
                     <td className="px-3 py-2">
-                      {row.targetDate ? formatDate(row.targetDate) : '—'}
+                      {row.targetDate
+                        ? formatDate(row.targetDate)
+                        : '—'}
                     </td>
                     <td className="px-3 py-2">
                       {row.completionPercent ?? 0}%
@@ -343,7 +484,7 @@ export default function ReportViewPage() {
         )}
       </div>
 
-      {/* Appendix */}
+      {/* 🔹 Appendix */}
       <div className="bg-white border rounded-xl p-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <FileText className="text-purple-600" /> Appendix

@@ -106,6 +106,11 @@ export const reportSnapshots = pgTable("report_snapshots", {
   status: snapshotStatusEnum("status").notNull().default("pending"),
 
   approvedAt: timestamp("approved_at"),
+
+  signatureName: text('signature_name'),
+  signatureMethod: varchar('signature_method', { length: 32 }),
+  signatureUrl: text('signature_url'),
+
 });
 
 // ---------- USERS TABLE ----------
