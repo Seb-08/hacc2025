@@ -1,51 +1,41 @@
 'use client';
 
 import { Engagespot } from '@engagespot/react-component';
-
-/*const theme = {
-  colors: { 
-    colorPrimary: "#ffffffff",
-    colorAccent: "#f10909ff" 
-    },
-};
-
-export default function NotificationBell({ userId }: { userId: string }) {
-  return (
-    <Engagespot 
-  apiKey="z5jqkoug6vgs00m1fc6li" 
-  userId="unique-user-id"
-  theme={theme}
-/>
-  );
-}*/
-
-// components/NotificationBell.tsx
+import { useEffect, useState } from 'react';
 
 export default function NotificationBell() {
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Fetch logged-in user
+  useEffect(() => {
+    (async () => {
+      const res = await fetch('/api/auth/me');
+      const data = await res.json();
+      if (data?.user) {
+        // You can use either id or email — just be consistent
+        setUserId(data.user.role === "admin" ? "admin@example.com" : "vendor@example.com");
+      }
+    })();
+  }, []);
+
+  if (!userId) return null;
+
   return (
-    <div className="relative w-8 h-8 flex items-center justify-center">
-      {/* Engagespot bell */}
+    <div className="flex items-center justify-center">
       <Engagespot
-        apiKey="z5jqkoug6vgs00m1fc6li"
-        userId="test-user"
+        key={userId}
+        apiKey={process.env.NEXT_PUBLIC_ENGAGESPOT_API_KEY!}
+        userId={userId}
         theme={{
           colors: {
-            colorPrimary: '#FFFFFF', // fallback white
-            brandingPrimary: '#FFFFFF',
+            brandingPrimary: '#2FB8AC', // ETS blue example
           },
           notificationButton: {
-            iconFill: '#FFFFFF',   // attempts to force bell white
-            background: 'transparent',
-            hoverBackground: 'rgba(255,255,255,0.1)',
-          },
-          dropdown: {
             iconFill: '#FFFFFF',
+            background: 'transparent',
           },
         }}
       />
-
-      {/* Manual red badge */}
-      <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
     </div>
   );
 }

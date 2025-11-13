@@ -1,54 +1,65 @@
 // Hawai‘i ETS Homepage
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 export default function Homepage() {
   return (
     <main className="bg-[#F4FAFA] text-[#002C3E] min-h-screen">
-      {/* Hero Section */}
-      <section className="text-center py-24 px-6">
-        <h2 className="text-4xl font-extrabold mb-4">
+      <section className="flex flex-col items-center text-center min-h-[90vh] px-6 bg-gradient-to-b from-[#F4FAFA] to-[#E7F7F6] pt-24">
+        <h2 className="text-5xl font-extrabold mb-6">
           Independent Verification and Validation Reports
         </h2>
 
-        <p className="text-gray-700 mb-10 max-w-2xl mx-auto">
+        <p className="text-gray-700 mb-12 max-w-2xl mx-auto text-lg">
           Enterprise Technology Services (ETS) leads statewide IT strategy, cybersecurity,
           and digital services to better serve the people of Hawai‘i.
         </p>
 
-        {/* Search Bar */}
-        <div className="flex justify-center mb-10">
+        {/* Search → routes to /reports?q=... */}
+        <form
+          action="/reports"
+          method="GET"
+          className="flex justify-center items-center mb-12"
+        >
           <input
             type="text"
-            placeholder="Search ETS Records"
-            className="input input-bordered rounded-l-full w-full max-w-lg text-gray-700 focus:outline-none"
+            name="q"
+            placeholder="Search ETS Reports"
+            className="w-[750px] rounded-l-full border border-gray-300 text-gray-700 text-lg px-6 py-3.5
+                       focus:outline-none focus:ring-2 focus:ring-[#2FA8A3] shadow-sm"
           />
-          <button className="btn bg-[#2FA8A3] hover:bg-[#24938f] text-white rounded-r-full">
+          <button
+            type="submit"
+            className="bg-[#2FA8A3] hover:bg-[#24938f] text-white font-medium rounded-r-full px-8 py-[13px]
+                       text-lg transition-colors border border-[#2FA8A3] -ml-[1px]"
+          >
             Search
           </button>
-        </div>
+        </form>
 
-        {/* Buttons */}
-        <div className="flex justify-center gap-4">
-          <a href="/services" className="btn bg-[#2FA8A3] text-white hover:bg-[#24938f]">
-            Explore Services
+        <div className="flex justify-center gap-5">
+          <a
+            href="/reports"
+            className="bg-[#2FA8A3] text-white hover:bg-[#24938f] text-base rounded-full px-8 py-3 transition-colors"
+          >
+            View All Reports
           </a>
           <a
-            href="/projects"
-            className="btn btn-outline border-[#2FA8A3] text-[#002C3E] hover:bg-[#E7F7F6]"
+            href="https://ets.hawaii.gov/report/independent-verification-and-validation-reports/"
+            className="border border-[#2FA8A3] text-[#002C3E] hover:bg-[#E7F7F6] text-base rounded-full px-8 py-3 transition-colors"
           >
-            View Active Projects
+            Archived Reports
           </a>
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="h-[5px] bg-gradient-to-r from-[#00796B] to-[#2FA8A3] w-full"></div>
+      <div className="h-[6px] w-full bg-gradient-to-r from-[#00796B] to-[#2FA8A3]" />
 
-      {/* Quick Access Title */}
-      <section className="py-16 bg-white text-center border-t border-gray-200">
-        <h3 className="text-xl font-bold">Quick Access</h3>
+      <section className="py-20 bg-white text-center border-t border-gray-200">
+        <h3 className="text-2xl font-bold">Quick Access</h3>
+        {/* You can add featured links, stats, etc. here later */}
       </section>
     </main>
-  )
+  );
 }
