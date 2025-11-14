@@ -1,4 +1,5 @@
 // Hawai‘i ETS Homepage
+'use client';
 
 import React from 'react'
 
