@@ -3,6 +3,13 @@ import { NextResponse } from 'next/server';
 import { db } from '~/server/db';
 import { reportSnapshots } from '~/server/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { CreateEngagespotClient } from '@engagespot/node';
+
+const engagespot = new CreateEngagespotClient({
+  apiKey: process.env.ENGAGESPOT_API_KEY!,
+  apiSecret: process.env.ENGAGESPOT_API_SECRET!,
+});
+
 
 export async function POST(
   req: Request,
@@ -82,6 +89,22 @@ export async function POST(
           eq(reportSnapshots.status, 'pending'),
         ),
       );
+
+      try {
+        const res = await engagespot.send({
+          notification: {
+            title: "Report Approved ✅",
+            message: "Your report has been approved by ETS.",
+            url: ``,
+          },
+          sendTo: {
+            recipients: ["vendor@example.com"], 
+          },
+        });
+        console.log("✅ Engagespot notification sent to demo vendor:", res);
+      } catch (err) {
+        console.error("❌ Engagespot send failed for demo vendor", err);
+      } 
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

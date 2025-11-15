@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { getCurrentUser } from '~/lib/auth';
 import AuthButtonClient from '~/components/AuthButtonClient';
+import NotificationBell from './notificationbell';
 
 const geist = Geist({ subsets: ['latin'], display: 'swap' });
 
@@ -78,7 +79,7 @@ export default async function RootLayout({
                   <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full" />
                 </Link>
               ))}
-
+            {user && <NotificationBell />}
               {/* Login / Logout dynamic button */}
               <AuthButtonClient />
             </nav>

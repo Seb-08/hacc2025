@@ -3,7 +3,12 @@ import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { reports, reportSnapshots } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
+import { CreateEngagespotClient } from "@engagespot/node"; 
 
+const engagespot = new CreateEngagespotClient({
+  apiKey: process.env.ENGAGESPOT_API_KEY!,
+  apiSecret: process.env.ENGAGESPOT_API_SECRET!,
+});
 /**
  * POST /api/reports/[id]/submit
  * Create a frozen snapshot of the report and its children.
@@ -76,6 +81,23 @@ export async function POST(
       .update(reports)
       .set({ updatedAt: now })
       .where(eq(reports.id, reportId));
+
+
+try {
+      const res = await engagespot.send({
+        notification: {
+          title: "New Report Submitted",
+          message: "A vendor just submitted a new report for review.",
+          url: ``,
+        },
+        sendTo: {
+          recipients: ["admin@example.com"], 
+        },
+      });
+      console.log("✅ Engagespot notification sent to demo admin:", res);
+    } catch (err) {
+      console.error("❌ Engagespot send failed for demo admin", err);
+    }
 
     // 5️⃣ Respond success with snapshot metadata
     return NextResponse.json({
