@@ -14,6 +14,8 @@ import {
 import { Bar } from 'react-chartjs-2';
 import type { ChartData, ChartOptions } from 'chart.js';
 import '~/lib/chartSetup';
+import { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 // Matches your DB snapshot shape
 type Snapshot = {
@@ -161,6 +163,15 @@ export default function ReportViewPage() {
     }
   };
 
+  const componentRef = useRef<HTMLDivElement | null>(null);
+
+  const handlePrint = useReactToPrint({
+  contentRef: componentRef,
+  documentTitle: selectedSnapshot?.name
+    ? `${selectedSnapshot.name} Report`
+    : "Report",
+});
+
   if (loading) {
     return <p className="p-6 text-gray-600">Loading snapshots...</p>;
   }
@@ -237,7 +248,15 @@ export default function ReportViewPage() {
     activeSnapshot?.createdAt ?? submittedAt ?? '';
 
   return (
-    <div className="p-6 md:p-10 space-y-10">
+    <div>
+       <div className="flex justify-end mb-4">
+        <button
+        onClick={handlePrint}
+        className="px-4 py-2 bg-[#2FB8AC] text-white rounded-md shadow hover:bg-[#00796B]">
+        Export as PDF
+      </button>
+      </div>
+    <div className="p-6 md:p-10 space-y-10" ref={componentRef}>
       {/* 🔹 AI Summary */}
       <div className="bg-gradient-to-r from-[#E0F7F5] to-[#F5FBFF] border border-[#B8E6E0] rounded-2xl p-4 flex gap-3 items-start shadow-sm">
         <div className="mt-1">
@@ -497,6 +516,7 @@ export default function ReportViewPage() {
           </p>
         )}
       </div>
+    </div>
     </div>
   );
 }
