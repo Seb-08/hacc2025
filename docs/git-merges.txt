@@ -1,0 +1,8 @@
+* cd30890 Merge pull request #17 from Seb-08/ui
+* 56de6f4 Merge pull request #16 from Seb-08/ui
+* 4b506ed Merge pull request #15 from Seb-08/ui
+* 537e05d trying to solve issue
+* 2115ac7 mergeing with prototype
+* 40062ab Merge branch 'prototype' of https://github.com/Seb-08/hacc2025 into prototype
+* c11a7a4 Merge branch 'main' of https://github.com/Seb-08/hacc2025
+* dcbefef Merge pull request #1 from Da-Iba/main

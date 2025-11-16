@@ -1,0 +1,1059 @@
+* commit 46bf86cba3c09d4d0e5d2176156e5f29a0e29474 (origin/navbar)
+| Author: Kaila Wallace <kailawallace00@gmail.com>
+| Date:   2025-11-16
+| 
+|     Update layout.tsx
+| 
+|  src/app/layout.tsx | 23 +++++++++++++++++++----
+|  1 file changed, 19 insertions(+), 4 deletions(-)
+| 
+* commit d7711a10bfe34c52e7ab1d57db93a36b960b9005
+| Author: Kaila Wallace <kailawallace00@gmail.com>
+| Date:   2025-11-16
+| 
+|     Update layout.tsx
+| 
+|  src/app/layout.tsx | 17 ++++++++---------
+|  1 file changed, 8 insertions(+), 9 deletions(-)
+| 
+* commit c939ee4ef2fb7825e2ae1fa5eb48dbdf24634173
+| Author: Kaila Wallace <kailawallace00@gmail.com>
+| Date:   2025-11-16
+| 
+|     Update page.tsx
+| 
+|  src/app/page.tsx | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+| 
+* commit dd0aac6e9b875567e40f8b9300d31482fdfebe3c
+| Author: Kaila Wallace <kailawallace00@gmail.com>
+| Date:   2025-11-16
+| 
+|     Update page.tsx
+| 
+|  src/app/page.tsx | 107 ++++++++++++++++++++++++++++++-----------------------
+|  1 file changed, 60 insertions(+), 47 deletions(-)
+| 
+* commit 9b0bca4939d5db6a183786d03b090d5d939b7d88
+| Author: Kaila Wallace <kailawallace00@gmail.com>
+| Date:   2025-11-16
+| 
+|     Update layout.tsx
+| 
+|  src/app/layout.tsx | 223 +++++++++++++++++++++++----------------------------
+|  1 file changed, 99 insertions(+), 124 deletions(-)
+| 
+* commit c586abf2b214750d7f44e8f98aa0f052323cd4a3
+| Author: Kaila Wallace <kailawallace00@gmail.com>
+| Date:   2025-11-16
+| 
+|     Update page.tsx
+| 
+|  src/app/page.tsx | 33 +++++++++++++++++++++------------
+|  1 file changed, 21 insertions(+), 12 deletions(-)
+| 
+* commit a6e6d9c6a331dc63199d1414aec8640c71bfeb7b
+| Author: Luvelykai <kailawallace00@gmail.com>
+| Date:   2025-11-04
+| 
+|     admin views for navbar 11/4
+| 
+|  src/app/layout.tsx | 92 +++++++++++++++++++++++++++++++++++-----------------
+|  src/app/page.tsx   | 40 ++++++++++++-----------
+|  2 files changed, 84 insertions(+), 48 deletions(-)
+| 
+* commit b5050e363622ccfe939ae2a38d0da44221b9f3de
+| Author: luvelykai <kailawallace00@gmail.com>
+| Date:   2025-11-03
+| 
+|     nav routing
+| 
+|  src/app/layout.tsx | 48 ++++++++++++++++++++++++++++++++----------------
+|  src/app/page.tsx   |  6 +++---
+|  2 files changed, 35 insertions(+), 19 deletions(-)
+|   
+| * commit 50c370c47d8311aa9798827c99e9feba319eb727 (HEAD -> main, origin/main, origin/charts, origin/HEAD, charts)
+| | Author: Calina Ryan <2601400323@k12.hi.us>
+| | Date:   2025-11-15
+| | 
+| |     exporting
+| | 
+| |  package.json                       |   3 +
+| |  pnpm-lock.yaml                     | 751 ++++++++++++++++++++++++++++++++-
+| |  src/app/reports/view/[id]/page.tsx |  22 +-
+| |  3 files changed, 773 insertions(+), 3 deletions(-)
+| | 
+| * commit 670a67bbc5a7e6404dccdcdcee9be60cdc793b9d
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-14
+| | 
+| |     noti
+| | 
+| |  .env                                             |  7 +++-
+| |  src/app/api/reports/[id]/submit/route.ts         | 22 +++++++++++
+| |  .../api/review/snapshots/[id]/approve/route.ts   | 23 +++++++++++
+| |  src/app/api/review/snapshots/[id]/deny/route.ts  | 22 +++++++++++
+| |  src/app/layout.tsx                               |  3 +-
+| |  src/app/notificationbell.tsx                     | 41 ++++++++++++++++++++
+| |  6 files changed, 116 insertions(+), 2 deletions(-)
+| | 
+| * commit 05cf40a39e1bd0f0e383d92816b481ae59dcd2b0 (notifacations)
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-14
+| | 
+| |     yessah
+| | 
+| |  src/server/db/hierarchy.ts | 179 -----------------------------------------
+| |  1 file changed, 179 deletions(-)
+| |   
+| | * commit 66babc52e5d4c1c150504b6886815ae847006911 (origin/notifications)
+| | | Author: Calina Ryan <2601400323@k12.hi.us>
+| | | Date:   2025-11-15
+| | | 
+| | |     adding exporting since it works on my end
+| | | 
+| | |  package.json                       |   6 +
+| | |  pnpm-lock.yaml                     | 324 +++++++++++++++++++++++++++++++
+| | |  src/app/reports/view/[id]/page.tsx |  28 ++-
+| | |  3 files changed, 357 insertions(+), 1 deletion(-)
+| | | 
+| | * commit c7ca34fd4883f70b52ed8f129191a41e7c4762a7 (notifications)
+| | | Author: Calina Ryan <2601400323@k12.hi.us>
+| | | Date:   2025-11-12
+| | | 
+| | |     notifications are functional
+| | | 
+| | |  .env                                            |   6 +-
+| | |  drizzle/0000_tranquil_rage.sql                  |  76 ++
+| | |  drizzle/meta/0000_snapshot.json                 | 516 +++++++++++++
+| | |  drizzle/meta/_journal.json                      |  20 +
+| | |  package.json                                    |  16 +
+| | |  pnpm-lock.yaml                                  | 696 +++++++++++++++++-
+| | |  src/app/api/ai/summary/route.ts                 | 107 +++
+| | |  src/app/api/auth/login/route.ts                 |  39 +
+| | |  src/app/api/auth/logout/route.ts                |   7 +
+| | |  src/app/api/auth/me/route.ts                    |  16 +
+| | |  src/app/api/createMonthlyReport/route.ts        |  23 -
+| | |  src/app/api/departments/route.ts                |   8 -
+| | |  src/app/api/issues/route.ts                     |  21 -
+| | |  src/app/api/posts/route.ts                      |  53 --
+| | |  src/app/api/projects/route.ts                   |  14 -
+| | |  src/app/api/reports/[id]/appendix/route.ts      |  48 ++
+| | |  src/app/api/reports/[id]/financials/route.ts    |  50 ++
+| | |  src/app/api/reports/[id]/issues/route.ts        |  69 ++
+| | |  src/app/api/reports/[id]/route.ts               |  62 ++
+| | |  .../api/reports/[id]/scope-schedule/route.ts    |  75 ++
+| | |  src/app/api/reports/[id]/snapshots/route.ts     |  29 +
+| | |  src/app/api/reports/[id]/submit/route.ts        | 121 +++
+| | |  src/app/api/reports/route.ts                    |  66 ++
+| | |  .../api/review/snapshots/[id]/approve/route.ts  | 118 +++
+| | |  src/app/api/review/snapshots/[id]/deny/route.ts |  44 ++
+| | |  src/app/api/review/snapshots/route.ts           |  48 ++
+| | |  src/app/api/schedules/route.ts                  |  21 -
+| | |  src/app/api/uploadthing/core.ts                 |  21 +-
+| | |  src/app/api/uploadthing/route.ts                |   8 +-
+| | |  src/app/form/FormLandingClient.tsx              | 158 ++++
+| | |  src/app/form/FormLayoutClient.tsx               |  26 +
+| | |  src/app/form/general/appendix/page.tsx          | 162 ++++
+| | |  src/app/form/general/financial/page.tsx         |  71 ++
+| | |  src/app/form/general/issues/[issueid]/page.tsx  | 145 ++++
+| | |  src/app/form/general/issues/page.tsx            | 102 +++
+| | |  src/app/form/general/page.tsx                   |  64 ++
+| | |  src/app/form/general/schedule/page.tsx          | 220 ++++++
+| | |  src/app/form/layout.tsx                         |  19 +
+| | |  src/app/form/page.tsx                           |  13 +
+| | |  src/app/layout.tsx                              | 171 +++--
+| | |  src/app/login/page.tsx                          | 139 +++-
+| | |  src/app/monthlyreports/page.tsx                 |  95 ---
+| | |  src/app/notificationbell.tsx                    |  52 +-
+| | |  src/app/page.tsx                                |  61 +-
+| | |  src/app/reports/page.tsx                        | 240 ++++++
+| | |  src/app/reports/view/[id]/page.tsx              | 502 +++++++++++++
+| | |  src/app/review/ReviewSnapshotsClient.tsx        | 429 +++++++++++
+| | |  src/app/review/page.tsx                         | 429 +++++++++++
+| | |  src/app/searchresults/page.tsx                  |  78 --
+| | |  src/app/vendorediting/page.tsx                  |   1 -
+| | |  src/components/AuthButtonClient.tsx             | 103 +++
+| | |  src/components/SignatureModal.tsx               | 328 +++++++++
+| | |  src/components/report-draft-provider.tsx        | 167 +++++
+| | |  src/components/report-form-shell.tsx            |  14 +
+| | |  src/components/report-side-nav.tsx              |  72 ++
+| | |  src/lib/auth.ts                                 |  79 ++
+| | |  src/lib/chartSetup.ts                           |  30 +
+| | |  src/lib/fetchFullReport.ts                      |  43 ++
+| | |  src/lib/notify.ts                               |  25 +
+| | |  src/server/db/index.ts                          |   8 +-
+| | |  src/server/db/schema.ts                         | 247 ++++---
+| | |  src/server/db/uploadthing.ts                    |   2 +-
+| | |  src/styles/globals.css                          |   2 +-
+| | |  63 files changed, 6101 insertions(+), 594 deletions(-)
+| | | 
+| | * commit d669ebb8286fb922e0b9685d359557d0b46cbd6d
+| |/  Author: Calina Ryan <2601400323@k12.hi.us>
+|/|   Date:   2025-11-04
+| |   
+| |       ui of notifications
+| |   
+| |    .env                         |   5 +-
+| |    package.json                 |   2 +
+| |    pnpm-lock.yaml               | 668 +++++++++++++++++++++++++++++++++++++
+| |    src/app/layout.tsx           |   3 +
+| |    src/app/notificationbell.tsx |  51 +++
+| |    5 files changed, 728 insertions(+), 1 deletion(-)
+| |   
+| | * commit efa620c04fd85de7bd9f1e3d294f9b716cb1a12e (origin/feature/searchresults)
+| | | Author: FailedToast <pixelwinter07@gmail.com>
+| | | Date:   2025-11-13
+| | | 
+| | |     Things I currently had
+| | | 
+| | |  .env                                            |   4 +-
+| | |  drizzle/0000_lonely_kabuki.sql                  |  61 ++
+| | |  drizzle/0001_sad_lilandra.sql                   |  14 +
+| | |  drizzle/meta/0000_snapshot.json                 | 415 ++++++++++++
+| | |  drizzle/meta/0001_snapshot.json                 | 502 ++++++++++++++
+| | |  drizzle/meta/_journal.json                      |  20 +
+| | |  package.json                                    |  17 +-
+| | |  pnpm-lock.yaml                                  | 628 +++++++++++++++++-
+| | |  src/app/api/ai/summary/route.ts                 | 107 +++
+| | |  src/app/api/reports/[id]/appendix/route.ts      |  48 ++
+| | |  src/app/api/reports/[id]/financials/route.ts    |  50 ++
+| | |  src/app/api/reports/[id]/issues/route.ts        |  69 ++
+| | |  src/app/api/reports/[id]/route.ts               |  62 ++
+| | |  .../api/reports/[id]/scope-schedule/route.ts    |  75 +++
+| | |  src/app/api/reports/[id]/snapshots/route.ts     |  29 +
+| | |  src/app/api/reports/[id]/submit/route.ts        |  95 +++
+| | |  src/app/api/reports/route.ts                    |  66 ++
+| | |  .../api/review/snapshots/[id]/approve/route.ts  |  94 +++
+| | |  src/app/api/review/snapshots/[id]/deny/route.ts |  48 ++
+| | |  src/app/api/review/snapshots/route.ts           | 107 +++
+| | |  src/app/api/uploadthing/core.ts                 |  21 +-
+| | |  src/app/api/uploadthing/route.ts                |   8 +-
+| | |  src/app/page.tsx                                |   1 +
+| | |  src/app/reports/page.tsx                        | 240 +++++++
+| | |  src/app/reports/view/[id]/page.tsx              | 502 ++++++++++++++
+| | |  src/app/review/ReviewSnapshotsClient.tsx        | 429 ++++++++++++
+| | |  src/app/review/page.tsx                         |  15 +
+| | |  src/app/searchresults/page.tsx                  |  25 +-
+| | |  src/components/AuthButtonClient.tsx             | 103 +++
+| | |  src/components/SignatureModal.tsx               | 328 +++++++++
+| | |  src/components/report-draft-provider.tsx        | 167 +++++
+| | |  src/components/report-form-shell.tsx            |  14 +
+| | |  src/components/report-side-nav.tsx              |  72 ++
+| | |  src/server/db/schema.ts                         | 256 +++----
+| | |  34 files changed, 4547 insertions(+), 145 deletions(-)
+| | | 
+| | * commit 8973dc88912d3cf15e52bbe04fce8908ee112905
+| | | Author: FailedToast <pixelwinter07@gmail.com>
+| | | Date:   2025-11-04
+| | | 
+| | |     Added data from database
+| | | 
+| | |  src/app/searchresults/page.tsx | 25 ++++++++++++++++++++-----
+| | |  1 file changed, 20 insertions(+), 5 deletions(-)
+| | | 
+| | * commit 88c08c7d2cccb7684f259797d8340e7b4e238d63
+| | | Author: FailedToast <pixelwinter07@gmail.com>
+| | | Date:   2025-11-03
+| | | 
+| | |     Added API to search results
+| | | 
+| | |  src/app/api/createMonthlyReport/route.ts |  17 ++-
+| | |  src/app/api/issues/route.ts              |  24 ++--
+| | |  src/app/api/posts/route.ts               |  72 ++++-------
+| | |  src/app/api/projects/route.ts            |  13 +-
+| | |  src/app/api/schedules/route.ts           |  23 +++-
+| | |  src/server/db/hierarchy.ts               | 158 ++++++++++++++++---------
+| | |  src/server/db/schema.ts                  |  21 +++-
+| | |  7 files changed, 191 insertions(+), 137 deletions(-)
+| | | 
+| | * commit 30be02e3f7a4d383c8d9ea23c95b8b01256f787e
+| |/| Merge: 557b0df 8e26994
+|/| | Author: FailedToast <pixelwinter07@gmail.com>
+| | | Date:   2025-11-03
+| | | 
+| | |     11/3 added imports for querying
+| | | 
+| | * commit 8e269949473c780574f9e04286ab13609944c8ce
+| | | Author: FailedToast <pixelwinter07@gmail.com>
+| | | Date:   2025-11-03
+| | | 
+| | |     Refined again
+| | | 
+| | |  src/app/searchresults/page.tsx | 6 +++++-
+| | |  src/app/vendorediting/page.tsx | 2 +-
+| | |  2 files changed, 6 insertions(+), 2 deletions(-)
+| | | 
+| | * commit 80b59a2a943684e7c313052b9a1704661b8b425c
+| | | Author: FailedToast <BeenForsaken@proton.me>
+| | | Date:   2025-11-03
+| | | 
+| | |     refined ui
+| | | 
+| | |  src/app/searchresults/page.tsx |  46 ++++++++++----
+| | |  src/app/vendorediting/page.tsx | 114 +++++++++++++++++++++++++++++++++++
+| | |  2 files changed, 147 insertions(+), 13 deletions(-)
+| | | 
+* | | commit 557b0df6049a4e4a97333c3273f052fecdfba205 (origin/prototype)
+| |/  Author: Kaila Wallace <kailawallace00@gmail.com>
+|/|   Date:   2025-11-03
+| |   
+| |       Update page.tsx
+| |   
+| |    src/app/page.tsx | 1 -
+| |    1 file changed, 1 deletion(-)
+| |   
+| | * commit a459d0b520c461f9d0f85cada76af864e428d169 (origin/month)
+| |/  Author: Da-Iba <143767665+Da-Iba@users.noreply.github.com>
+| |   Date:   2025-11-13
+| |   
+| |       Create LICENSE.txt
+| |   
+| |    LICENSE.txt | 21 +++++++++++++++++++++
+| |    1 file changed, 21 insertions(+)
+| | 
+| * commit 65753392d3018773f92c83cdcf5caaa24e086b4a
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-07
+| | 
+| |     all done
+| | 
+| |  .env                                             |   4 +-
+| |  drizzle/0001_sad_lilandra.sql                    |  14 +
+| |  drizzle/meta/0001_snapshot.json                  | 502 +++++++++++++++++++
+| |  drizzle/meta/_journal.json                       |   7 +
+| |  package.json                                     |   2 +
+| |  pnpm-lock.yaml                                   |  29 ++
+| |  src/app/api/ai/summary/route.ts                  | 107 ++++
+| |  .../api/review/snapshots/[id]/approve/route.ts   |  95 +++-
+| |  src/app/api/uploadthing/core.ts                  |  19 +
+| |  src/app/api/uploadthing/route.ts                 |   7 +
+| |  src/app/reports/view/[id]/page.tsx               | 245 +++++++--
+| |  src/app/review/ReviewSnapshotsClient.tsx         | 263 +++-------
+| |  src/components/SignatureModal.tsx                | 328 ++++++++++++
+| |  src/server/db/schema.ts                          |   5 +
+| |  14 files changed, 1361 insertions(+), 266 deletions(-)
+| | 
+| * commit a22ea231acb3e1a30e3332cfea10014d27c0b433
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-07
+| | 
+| |     login
+| | 
+| |  package.json                             |   4 +
+| |  pnpm-lock.yaml                           |  53 +++
+| |  src/app/api/auth/login/route.ts          |  39 ++
+| |  src/app/api/auth/logout/route.ts         |   7 +
+| |  src/app/api/auth/me/route.ts             |  16 +
+| |  src/app/form/FormLandingClient.tsx       | 158 ++++++++
+| |  src/app/form/FormLayoutClient.tsx        |  26 ++
+| |  src/app/form/layout.tsx                  |  37 +-
+| |  src/app/form/page.tsx                    | 157 +-------
+| |  src/app/layout.tsx                       | 172 +++++----
+| |  src/app/login/page.tsx                   | 141 +++++--
+| |  src/app/review/ReviewSnapshotsClient.tsx | 546 +++++++++++++++++++++++++++
+| |  src/app/review/page.tsx                  | 501 +-----------------------
+| |  src/components/AuthButtonClient.tsx      | 103 +++++
+| |  src/lib/auth.ts                          |  79 ++++
+| |  src/server/db/schema.ts                  |  13 +-
+| |  16 files changed, 1276 insertions(+), 776 deletions(-)
+| | 
+| * commit bcf1a79150b0cee7d61085b35f7e482f7c85e0a0
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-06
+| | 
+| |     reveiw n stuff
+| | 
+| |  drizzle/0000_lonely_kabuki.sql                   |  61 +++
+| |  drizzle/meta/0000_snapshot.json                  | 415 ++++++++++++++++
+| |  drizzle/meta/_journal.json                       |  10 +-
+| |  src/app/api/reports/[id]/route.ts                |   2 +-
+| |  src/app/api/reports/[id]/snapshots/route.ts      |  19 +-
+| |  src/app/api/reports/[id]/submit/route.ts         |  68 ++-
+| |  src/app/api/reports/route.ts                     |  28 +-
+| |  .../api/review/snapshots/[id]/approve/route.ts   |  45 ++
+| |  src/app/api/review/snapshots/[id]/deny/route.ts  |  44 ++
+| |  src/app/api/review/snapshots/route.ts            |  48 ++
+| |  src/app/review/page.tsx                          | 496 +++++++++++++++++++
+| |  src/app/searchresults/page.tsx                   |  78 ---
+| |  src/server/db/schema.ts                          |  76 ++-
+| |  13 files changed, 1259 insertions(+), 131 deletions(-)
+| | 
+| * commit 8b71c70708ea6fbe4e0fbbd52bfc179690a1ccc7
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-06
+| | 
+| |     polished 11/6, 8:35pm
+| | 
+| |  src/app/api/reports/[id]/appendix/route.ts       |  49 ++-
+| |  src/app/api/reports/[id]/financials/route.ts     |  45 ++-
+| |  src/app/api/reports/[id]/issues/route.ts         |  70 +++-
+| |  src/app/api/reports/[id]/route.ts                |  51 ++-
+| |  src/app/api/reports/[id]/scope-schedule/route.ts |  76 +++-
+| |  src/app/api/reports/[id]/snapshots/route.ts      |  16 +
+| |  src/app/api/reports/[id]/submit/route.ts         |  27 +-
+| |  src/app/api/reports/route.ts                     |  20 +-
+| |  src/app/form/general/appendix/page.tsx           |  97 ++---
+| |  src/app/form/general/issues/[issueId]/page.tsx   |  43 +--
+| |  src/app/form/general/issues/page.tsx             |  16 +-
+| |  src/app/form/general/schedule/page.tsx           | 230 +++++++-----
+| |  src/app/form/page.tsx                            | 184 +++++++---
+| |  src/app/layout.tsx                               |  72 ++--
+| |  src/app/page.tsx                                 |  60 +--
+| |  src/app/reports/page.tsx                         | 240 ++++++++++++
+| |  src/app/reports/view/[id]/page.tsx               | 361 +++++++++++++++++++
+| |  src/app/vendorediting/page.tsx                   |   1 -
+| |  src/components/report-draft-provider.tsx         |  36 +-
+| |  19 files changed, 1330 insertions(+), 364 deletions(-)
+| |   
+| | * commit 5ec3ad2f29143af3381faa83a086507553996093 (origin/login)
+| |/  Author: Henry <henrychristley@gmail.com>
+| |   Date:   2025-11-05
+| |   
+| |       added firebase
+| |   
+| |    package.json   |   1 +
+| |    pnpm-lock.yaml | 814 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+| |    2 files changed, 812 insertions(+), 3 deletions(-)
+| | 
+| * commit f33869cd45d7088758df6ca501ed3e16b35b016e
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-05
+| | 
+| |     autofill
+| | 
+| |  src/app/form/layout.tsx | 18 +++++++++--------
+| |  src/app/form/page.tsx   | 47 +++++++++++++++++++++++++++++++++++----------
+| |  2 files changed, 47 insertions(+), 18 deletions(-)
+| | 
+| * commit dc4c0a172726d68fc6c2d098daa7cc1966a6e334
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-11-05
+| | 
+| |     form
+| | 
+| |  drizzle/meta/_journal.json                       |   5 +
+| |  package.json                                     |   7 +
+| |  pnpm-lock.yaml                                   | 514 ++++++++++++++++++-
+| |  src/app/api/createMonthlyReport/route.ts         |  23 -
+| |  src/app/api/departments/route.ts                 |   8 -
+| |  src/app/api/issues/route.ts                      |  21 -
+| |  src/app/api/posts/route.ts                       |  53 --
+| |  src/app/api/projects/route.ts                    |  14 -
+| |  src/app/api/reports/[id]/appendix/route.ts       |  17 +
+| |  src/app/api/reports/[id]/financials/route.ts     |  17 +
+| |  src/app/api/reports/[id]/issues/route.ts         |  17 +
+| |  src/app/api/reports/[id]/route.ts                |  71 +++
+| |  src/app/api/reports/[id]/scope-schedule/route.ts |  17 +
+| |  src/app/api/reports/[id]/submit/route.ts         |  72 +++
+| |  src/app/api/reports/route.ts                     |  46 ++
+| |  src/app/api/schedules/route.ts                   |  21 -
+| |  src/app/api/uploadthing/core.ts                  |   2 -
+| |  src/app/api/uploadthing/route.ts                 |   7 -
+| |  src/app/form/general/appendix/page.tsx           | 157 ++++++
+| |  src/app/form/general/financial/page.tsx          |  71 +++
+| |  src/app/form/general/issues/[issueId]/page.tsx   | 148 ++++++
+| |  src/app/form/general/issues/page.tsx             |  96 ++++
+| |  src/app/form/general/page.tsx                    |  64 +++
+| |  src/app/form/general/schedule/page.tsx           | 166 ++++++
+| |  src/app/form/layout.tsx                          |  24 +
+| |  src/app/form/page.tsx                            | 382 ++------------
+| |  src/app/monthlyreports/page.tsx                  |  95 ----
+| |  src/components/report-draft-provider.tsx         | 143 ++++++
+| |  src/components/report-form-shell.tsx             |  14 +
+| |  src/components/report-side-nav.tsx               |  72 +++
+| |  src/lib/fetchFullReport.ts                       |  43 ++
+| |  src/server/db/index.ts                           |   8 +-
+| |  src/server/db/schema.ts                          | 193 ++++---
+| |  33 files changed, 1924 insertions(+), 684 deletions(-)
+| | 
+| * commit 819992180330bd14d87a5eb8c6b7225964b15736
+|/  Author: Seb-08 <sebastiantsutsui@gmail.com>
+|   Date:   2025-11-01
+|   
+|       charts showcase
+|   
+|    package.json             |   2 +
+|    pnpm-lock.yaml           |  30 ++++
+|    src/app/display/page.tsx |  74 ++++++++++
+|    src/app/form/page.tsx    | 335 +++++++++++++++++++++++++++++++++++++++++++
+|    src/lib/chartSetup.ts    |  30 ++++
+|    5 files changed, 471 insertions(+)
+|   
+| * commit eec5fedb5dde1c78ac75209bc46a57766dc11e98 (origin/Form)
+|/  Author: Jathan <tfdevil1918@gmail.com>
+|   Date:   2025-11-02
+|   
+|       Jathan Form first commit
+|   
+|    package.json          |   2 +-
+|    pnpm-lock.yaml        |  10 +-
+|    src/app/form/page.tsx | 366 ++++++++++++++++++++++++++++++++++++++++++++++
+|    3 files changed, 372 insertions(+), 6 deletions(-)
+|   
+| * commit 3e2ea520f6163cb465486b436a231377cb0b01b3 (origin/database)
+|/  Author: Calina Ryan <2601400323@k12.hi.us>
+|   Date:   2025-11-02
+|   
+|       progress of schema and api updates, and started backend on hierarchy
+|   
+|    src/app/api/createMonthlyReport/route.ts |  15 ++-
+|    src/app/api/issues/route.ts              |  26 +++--
+|    src/app/api/projects/route.ts            |  11 +-
+|    src/app/api/schedules/route.ts           |  21 +++-
+|    src/server/db/hierarchy.ts               | 156 +++++++++++++++++----------
+|    src/server/db/schema.ts                  |  21 +++-
+|    6 files changed, 171 insertions(+), 79 deletions(-)
+|   
+| * commit 0c8c3a577a69791776dae6066fc37327664221d9 (origin/test)
+|/  Author: Da-Iba <dibanez11173@gmail.com>
+|   Date:   2025-10-30
+|   
+|       test2
+|   
+|    src/app/form/page.tsx | 335 ++++++++++++++++++++++++++++++++++++++++++++++
+|    1 file changed, 335 insertions(+)
+|   
+*   commit cd3089081da09a6d86302d8bf27c774273e7e23d
+|\  Merge: 56de6f4 3fc1da1
+| | Author: Da-Iba <143767665+Da-Iba@users.noreply.github.com>
+| | Date:   2025-10-30
+| | 
+| |     Merge pull request #17 from Seb-08/ui
+| |     
+| |     good
+| | 
+| * commit 3fc1da1381afaaa33506985fd5bf8fc1bf999cb8
+| | Author: Da-Iba <dibanez11173@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     good
+| | 
+| |  src/app/monthlyreports/page.tsx | 94 +++++++++++++++++++++++++++++++++++++
+| |  1 file changed, 94 insertions(+)
+| | 
+* | commit 56de6f495715a664870ac58fe8fc1d603921cffa
+|\| Merge: 4b506ed 1b52cc5
+| | Author: Seb-08 <165990184+Seb-08@users.noreply.github.com>
+| | Date:   2025-10-30
+| | 
+| |     Merge pull request #16 from Seb-08/ui
+| |     
+| |     login ui
+| | 
+| * commit 1b52cc5a9c4db4c5b3d13083123dcb97d63a6a0b
+| | Author: Henry <henrychristley@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     login ui
+| | 
+| |  src/app/login/page.tsx | 42 +++++++++++++++++++++++++++++++++++++++++-
+| |  1 file changed, 41 insertions(+), 1 deletion(-)
+| | 
+* | commit 4b506ed015b6bc1cff0340dad118dd5d9027f36a
+|\| Merge: 73d4850 a6f0538
+| | Author: Seb-08 <165990184+Seb-08@users.noreply.github.com>
+| | Date:   2025-10-30
+| | 
+| |     Merge pull request #15 from Seb-08/ui
+| |     
+| |     UI
+| | 
+| * commit a6f0538958dd1c431f067b9e295157b476f1c3cb
+| | Author: Kaila Wallace <kailawallace00@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     Updated layout 10/30
+| | 
+| |  src/app/layout.tsx | 129 ++++++++++++++++++++++++++++++++-----------------
+| |  1 file changed, 84 insertions(+), 45 deletions(-)
+| | 
+| * commit 95dabe6c90ed6ccf28744b5b436b05db7075935d
+| | Author: tfdevil1918 <tfdevil1918@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     searchresults -FailedToast
+| | 
+| |  src/app/searchresults/page.tsx | 77 ++++++++++++++++++++++++++++++++++++++
+| |  1 file changed, 77 insertions(+)
+| | 
+| * commit b8617d5ec9a74f5df54b1f16463c688398d6bd58
+| | Author: Kaila Wallace <kailawallace00@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     Updated page format 10/30
+| |     
+| |     This is the first update of the homepage
+| | 
+| |  src/app/page.tsx | 78 +++++++++++++++++++++++++++++++++-------------------
+| |  1 file changed, 49 insertions(+), 29 deletions(-)
+| | 
+| * commit 0f78ee09b20e89e9a85032600ba96e39135d7e51
+| | Author: Kaila Wallace <kailawallace00@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     Updated layout logo added
+| | 
+| |  src/app/layout.tsx | 54 ++++++++++++++++++++++++++++++++++++++++++++++++++
+| |  1 file changed, 54 insertions(+)
+| | 
+| * commit c13b57cd4e54f3d46ef9bfdfb2a1ba12d8b5a736
+| | Author: Kaila Wallace <kailawallace00@gmail.com>
+| | Date:   2025-10-30
+| | 
+| |     Updated layout logo added
+| | 
+| |  src/app/layout.tsx | 84 --------------------------------------------------
+| |  1 file changed, 84 deletions(-)
+| | 
+| * commit 6c78b5adbab2656d6dc685686fe65a8ac250750b
+| | Author: Calina Ryan <2601400323@k12.hi.us>
+| | Date:   2025-10-29
+| | 
+| |     api stuff for new schema
+| | 
+| |  src/app/api/createMonthlyReport/route.ts | 23 +++++++++++++++++++++++
+| |  src/app/api/departments/route.ts         |  8 ++++++++
+| |  src/app/api/issues/route.ts              | 21 +++++++++++++++++++++
+| |  src/app/api/projects/route.ts            | 14 ++++++++++++++
+| |  src/app/api/schedules/route.ts           | 21 +++++++++++++++++++++
+| |  5 files changed, 87 insertions(+)
+| |   
+| *   commit 537e05d153478b3555a0f63e7b007e034900a2d1
+| |\  Merge: 2cff087 d8b0315
+| | | Author: Calina Ryan <2601400323@k12.hi.us>
+| | | Date:   2025-10-29
+| | | 
+| | |     trying to solve issue
+| | | 
+| | * commit d8b0315ef25dc4eb74b7ff08e978cc8d0125dbe5
+| | | Author: Tony <tonytsou612@gmail.com>
+| | | Date:   2025-10-29
+| | | 
+| | |     Add profile page
+| | | 
+| | |  src/app/profile/page.tsx | 220 +++++++++++++++++++++++++++++++++++++++++
+| | |  1 file changed, 220 insertions(+)
+| | | 
+| | * commit 7a1fb04ed4bfe5649708968f5a8936056f4e4602
+| | | Author: Kaila Wallace <kailawallace00@gmail.com>
+| | | Date:   2025-10-28
+| | | 
+| | |     Update layout.tsx
+| | |     
+| | |     This is the fully updated layout with heading, background, and end caption.
+| | | 
+| | |  src/app/layout.tsx | 99 ++++++++++++++++++++++++++++++++++++++----------
+| | |  1 file changed, 79 insertions(+), 20 deletions(-)
+| | | 
+| * | commit 2cff087ab88d882ffce64f42f42c3f3e96dbba93
+| |/  Author: Calina Ryan <2601400323@k12.hi.us>
+| |   Date:   2025-10-29
+| |   
+| |       adding db files
+| |   
+| |    src/server/db/hierarchy.ts | 179 +++++++++++++++++++++++++++++++++++++++
+| |    src/server/db/schema.ts    | 107 ++++++++++++++++++++++-
+| |    2 files changed, 285 insertions(+), 1 deletion(-)
+| | 
+| * commit ee0083f0130483f527a37eb1a25c815e746c3d1a
+| | Author: Calina Ryan <2601400323@k12.hi.us>
+| | Date:   2025-10-27
+| | 
+| |     testing if pull requests work
+| | 
+| |  src/app/page.tsx | 2 ++
+| |  1 file changed, 2 insertions(+)
+| | 
+| * commit 101c1c9de89ca651ba9a535d25750de35b9a21ce
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create page.tsx
+| | 
+| |  src/app/monthlyreports/page.tsx | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit 9ee017e5ac6881dbee1c27c782cc257594a31dc9
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create page.tsx
+| | 
+| |  src/app/vendorediting/page.tsx | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit 00ac48c89d96b290e52a3d9f4a7fcada0d8bf412
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Delete src/app/vendorediting
+| | 
+| |  src/app/vendorediting | 1 -
+| |  1 file changed, 1 deletion(-)
+| | 
+| * commit d0dbec3e64778961e31af047c36fafc2eeb785ae
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create page.tsx
+| | 
+| |  src/app/form/page.tsx | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit 0192d00751af4dec896a89685ec3650c8620b951
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Delete src/app/form
+| | 
+| |  src/app/form | 1 -
+| |  1 file changed, 1 deletion(-)
+| | 
+| * commit c96ad376964ea3a17d16cfacead3e505c4d5d757
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create form
+| | 
+| |  src/app/form | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit 8b5b1a5377e11d1b255eee7b8f71ea679e57609e
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create vendorediting
+| | 
+| |  src/app/vendorediting | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit ac5d8d276ef7b513ff3133978ee14cbed80141aa
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create page.tsx
+| | 
+| |  src/app/profile/page.tsx | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit 32f7515e8babbf0c888a35a631589950ef2fb3a4
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create page.tsx
+| | 
+| |  src/app/login/page.tsx | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit c899ff3bcf3317e1805723f4a6e90dc56cec908c
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Create page.tsx
+| | 
+| |  src/app/searchresults/page.tsx | 1 +
+| |  1 file changed, 1 insertion(+)
+| | 
+| * commit 416452a5a794b69971960f52186bf0cce81bb854
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Delete src/app/TonyDanica directory
+| | 
+| |  src/app/TonyDanica/danica/page.tsx | 24 ------------------------
+| |  src/app/TonyDanica/lokahi/page.tsx |  8 --------
+| |  src/app/TonyDanica/test.ts         |  0
+| |  src/app/TonyDanica/tony/page.tsx   |  8 --------
+| |  4 files changed, 40 deletions(-)
+| | 
+| * commit c11d5ba809a298d66ceff0c4bdd8096ca8427593
+| | Author: HenryC213 <henrychristley@gmail.com>
+| | Date:   2025-10-27
+| | 
+| |     Delete src/app/JathanHenery directory
+| | 
+| |  src/app/JathanHenery/henery/page.tsx | 8 --------
+| |  src/app/JathanHenery/henry.ts        | 1 -
+| |  src/app/JathanHenery/jathan/page.tsx | 8 --------
+| |  src/app/JathanHenery/test.ts         | 0
+| |  4 files changed, 17 deletions(-)
+| | 
+| * commit 02406ab4ed0708dc6ed1552c9380303f94fe05f8
+|/  Author: HenryC213 <henrychristley@gmail.com>
+|   Date:   2025-10-27
+|   
+|       Delete src/app/CalinaKaila directory
+|   
+|    src/app/CalinaKaila/Calina/page.tsx | 14 --------------
+|    src/app/CalinaKaila/Kaila/page.tsx  |  8 --------
+|    2 files changed, 22 deletions(-)
+| 
+* commit 73d48505e6c64a09ec80b3405945d51bc8ef71ca
+| Author: Seb-08 <sebastiantsutsui@gmail.com>
+| Date:   2025-10-08
+| 
+|     Upload Thing, Search Bar, and filters
+| 
+|  .env                                        |   4 +-
+|  package.json                                |   3 +
+|  pnpm-lock.yaml                              | 228 ++++++++++++++++++++++++++
+|  src/app/CalinaKaila/test.ts                 |   0
+|  src/app/Sebastian/searching/page.tsx        | 135 +++++++++++++++
+|  src/app/Sebastian/uploading/page.tsx        | 130 +++++++++++++++
+|  src/app/SebastianTiffany/sebastian/page.tsx |   8 -
+|  src/app/SebastianTiffany/test.ts            |   1 -
+|  src/app/SebastianTiffany/tiffiany/page.tsx  |   8 -
+|  src/app/api/posts/route.ts                  |  53 ++++++
+|  src/app/api/uploadthing/core.ts             |   2 +
+|  src/app/api/uploadthing/route.ts            |   7 +
+|  src/app/page.tsx                            |   4 +-
+|  src/lib/uploadthing.ts                      |   5 +
+|  src/server/db/schema.ts                     |  34 ++--
+|  src/server/db/uploadthing.ts                |  13 ++
+|  16 files changed, 594 insertions(+), 41 deletions(-)
+| 
+* commit db09adf84cd4c6106883d5fd4e693852f1148f8f
+| Author: unknown <Seb-08>
+| Date:   2025-10-06
+| 
+|     database
+| 
+|  .env                               |  29 ++++++-
+|  package.json                       |   1 +
+|  pnpm-lock.yaml                     | 144 +++++++++++++++++++++++++++++++++--
+|  src/app/TonyDanica/danica/page.tsx |  30 ++++++--
+|  src/server/db/index.ts             |  19 +----
+|  src/server/db/schema.ts            |   1 +
+|  6 files changed, 195 insertions(+), 29 deletions(-)
+|   
+*   commit 2115ac74e5d692762b35779f3c102f165a8fffd6
+|\  Merge: 40062ab 2519976
+| | Author: CalinaRyan <calina.ryan08@gmail.com>
+| | Date:   2025-09-23
+| | 
+| |     mergeing with prototype
+| | 
+| * commit 2519976494fa0be48cedacbe91843def6f2d0492
+| | Author: CalinaRyan <calina.ryan08@gmail.com>
+| | Date:   2025-09-23
+| | 
+| |     changed my page.tsx
+| | 
+| |  package.json                        |    4 +-
+| |  pnpm-lock.yaml                      | 2106 ++++++++++++++++++++++++++++++-
+| |  postcss.config.js                   |    6 +-
+| |  src/app/CalinaKaila/Calina/page.tsx |    8 +-
+| |  src/styles/globals.css              |    1 +
+| |  5 files changed, 2111 insertions(+), 14 deletions(-)
+| |     
+| | *   commit c3127b4fd6d202cb0d80c08741c7f2441be539e0 (tag: mainprotect)
+| | |\  Merge: 43afab2 a4ea498
+| | | | Author: FailedToast <pixelwinter07@gmail.com>
+| | | | Date:   2025-09-23
+| | | | 
+| | | |     Merge pull request #11 from Seb-08/loka
+| | | |     
+| | | |     Push to loka branch w/ own page
+| | | | 
+| | | * commit a4ea498afc9f3a15aa3e501ab407528930d4e503
+| |_|/  Author: FailedToast <pixelwinter07@gmail.com>
+|/| |   Date:   2025-09-23
+| | |   
+| | |       Push to loka branch w/ own page
+| | |   
+| | |    package.json                       |  2 +-
+| | |    pnpm-lock.yaml                     |  6 +++---
+| | |    src/app/TonyDanica/lokahi/page.tsx | 15 ++++++++++++++-
+| | |    src/styles/globals.css             |  1 +
+| | |    4 files changed, 19 insertions(+), 5 deletions(-)
+| | | 
+| | * commit 43afab2b0a48833e80ac388227cf3299a00b9e9b
+| | | Author: unknown <Seb-08>
+| | | Date:   2025-09-23
+| | | 
+| | |     diasy ui
+| | | 
+| | |  package.json           | 2 +-
+| | |  pnpm-lock.yaml         | 6 +++---
+| | |  src/styles/globals.css | 1 +
+| | |  3 files changed, 5 insertions(+), 4 deletions(-)
+| | |   
+| | *   commit dafa1c4105bcd856b8a18e84399e4ecdc9d077ae
+| | |\  Merge: dbf1206 40062ab
+| |_|/  Author: Seb-08 <165990184+Seb-08@users.noreply.github.com>
+|/| |   Date:   2025-09-23
+| | |   
+| | |       Merge pull request #10 from Seb-08/prototype
+| | |       
+| | |       Prototype
+| | | 
+* | | commit 40062ab8adbc7ac6c96a257e512667f69c267cf1
+|\| | Merge: b6a93b2 9efa75f
+| | | Author: CalinaRyan <calina.ryan08@gmail.com>
+| | | Date:   2025-09-23
+| | | 
+| | |     Merge branch 'prototype' of https://github.com/Seb-08/hacc2025 into prototype
+| | | 
+* | | commit b6a93b22c908fc3e7ee372c4a7bb43f87dd782fb
+| | | Author: CalinaRyan <calina.ryan08@gmail.com>
+| | | Date:   2025-09-09
+| | | 
+| | |     test
+| | | 
+| | |  src/app/CalinaKaila/test.ts | 1 +
+| | |  1 file changed, 1 insertion(+)
+| | | 
+| | * commit dbf1206bc01c7e616931cd8bdd8bbc4dcd83b60a
+| |/| Merge: 9efa75f 489665e
+| | | Author: Seb-08 <165990184+Seb-08@users.noreply.github.com>
+| | | Date:   2025-09-22
+| | | 
+| | |     Merge pull request #9 from Seb-08/sebastian
+| | |     
+| | |     lesson 9/23
+| | | 
+| | * commit 489665e212fac97fc2634d0b9ac819abaa3f3930
+| |/  Author: Seb-08 <sebastiantsutsui@gmail.com>
+| |   Date:   2025-09-22
+| |   
+| |       lesson 9/23
+| |   
+| |    src/app/SebastianTiffany/sebastian/page.tsx | 17 +++++++++++------
+| |    1 file changed, 11 insertions(+), 6 deletions(-)
+| | 
+| * commit 9efa75fdd9b9bc9b871a7a27ac4874d560da2288
+| | Author: Seb-08 <sebastiantsutsui@gmail.com>
+| | Date:   2025-09-22
+| | 
+| |     main 9/22
+| | 
+| |  daisyui.d.ts                                |  1 +
+| |  package.json                                |  2 +
+| |  pnpm-lock.yaml                              | 91 +++++++++++++++++++++++++
+| |  postcss.config.js                           |  8 +--
+| |  src/app/CalinaKaila/Calina/page.tsx         |  8 +++
+| |  src/app/CalinaKaila/Kaila/page.tsx          |  8 +++
+| |  src/app/JathanHenery/henery/page.tsx        |  8 +++
+| |  src/app/JathanHenery/jathan/page.tsx        |  8 +++
+| |  src/app/SebastianTiffany/sebastian/page.tsx |  8 +++
+| |  src/app/SebastianTiffany/tiffiany/page.tsx  |  8 +++
+| |  src/app/TonyDanica/danica/page.tsx          |  8 +++
+| |  src/app/TonyDanica/lokahi/page.tsx          |  8 +++
+| |  src/app/TonyDanica/tony/page.tsx            |  8 +++
+| |  src/app/layout.tsx                          | 23 ++++---
+| |  src/app/page.tsx                            | 62 ++++++++---------
+| |  src/styles/globals.css                      | 11 ++-
+| |  tailwind.config.js                          | 11 +++
+| |  17 files changed, 230 insertions(+), 51 deletions(-)
+| | 
+| * commit 1f52bff496bfdb5d9d1db8ec22f3646e00f3027a
+| | Author: CalinaRyan <calina.ryan08@gmail.com>
+| | Date:   2025-09-22
+| | 
+| |     9/22 perosnal folders
+| | 
+| |  src/app/CalinaKaila/Calina/page.tsx         | 0
+| |  src/app/CalinaKaila/Kaila/page.tsx          | 0
+| |  src/app/JathanHenery/henery/page.tsx        | 0
+| |  src/app/JathanHenery/jathan/page.tsx        | 0
+| |  src/app/SebastianTiffany/sebastian/page.tsx | 0
+| |  src/app/SebastianTiffany/tiffiany/page.tsx  | 0
+| |  src/app/TonyDanica/danica/page.tsx          | 0
+| |  src/app/TonyDanica/lokahi/page.tsx          | 0
+| |  src/app/TonyDanica/tony/page.tsx            | 0
+| |  9 files changed, 0 insertions(+), 0 deletions(-)
+| |   
+| *   commit c11a7a4d9bd0fc10493ef9c4b8f1261f8fc1ea8d
+| |\  Merge: 728ec91 13f529a
+| | | Author: CalinaRyan <calina.ryan08@gmail.com>
+| | | Date:   2025-09-22
+| | | 
+| | |     Merge branch 'main' of https://github.com/Seb-08/hacc2025
+| | | 
+| | * commit 13f529af0ffe46b343b3819fb92a43b4734abf6f
+| | | Author: Henry <henrychristley@gmail.com>
+| | | Date:   2025-09-18
+| | | 
+| | |     added hola brochacho to henry.ts
+| | | 
+| | |  src/app/JathanHenery/henry.ts | 1 +
+| | |  1 file changed, 1 insertion(+)
+| | | 
+| | * commit dcbefef11a1b3d60670f57afcc48ffb46b2780d0
+| |/| Merge: a9413c7 fe1eccd
+|/| | Author: Da-Iba <143767665+Da-Iba@users.noreply.github.com>
+| | | Date:   2025-09-11
+| | | 
+| | |     Merge pull request #1 from Da-Iba/main
+| | |     
+| | |     Create .env
+| | | 
+| | * commit fe1eccdfe79cded269a54c16e1770bda431c0adf
+| |/  Author: Da-Iba <143767665+Da-Iba@users.noreply.github.com>
+|/|   Date:   2025-09-11
+| |   
+| |       Create .env
+| |       
+| |       creating env file to main
+| |   
+| |    .env | 13 +++++++++++++
+| |    1 file changed, 13 insertions(+)
+| | 
+* | commit a9413c7c013da594173cb1684af5ebc1e9548531
+| | Author: unknown <Seb-08>
+| | Date:   2025-09-09
+| | 
+| |     test push SEBASTIAN
+| | 
+| |  src/app/CalinaKaila/test.ts      | 1 -
+| |  src/app/SebastianTiffany/test.ts | 1 +
+| |  2 files changed, 1 insertion(+), 1 deletion(-)
+| | 
+| * commit 728ec914125cf6623b131820eb8d7f913405f07c
+|/  Author: CalinaRyan <calina.ryan08@gmail.com>
+|   Date:   2025-09-09
+|   
+|       testing
+|   
+|    src/app/CalinaKaila/test.ts | 4 +++-
+|    1 file changed, 3 insertions(+), 1 deletion(-)
+| 
+* commit 160b72b38eabfd10d4a33da639c37292dcd3d9fd
+| Author: unknown <Seb-08>
+| Date:   2025-09-09
+| 
+|     test push - sebastian
+| 
+|  src/app/CalinaKaila/test.ts | 1 +
+|  1 file changed, 1 insertion(+)
+| 
+* commit b3d1a85c70467eeb3187c9bf9662456ba912cd40
+  Author: unknown <Seb-08>
+  Date:   2025-09-09
+  
+      initial commit
+  
+   .env.example                     |   17 +
+   .gitignore                       |   46 +
+   README.md                        |   29 +
+   biome.jsonc                      |   26 +
+   drizzle.config.ts                |   12 +
+   next.config.js                   |   10 +
+   package.json                     |   44 +
+   pnpm-lock.yaml                   | 1881 ++++++++++++++++++++++++++++++++++++
+   postcss.config.js                |    5 +
+   public/favicon.ico               |  Bin 0 -> 15406 bytes
+   src/app/CalinaKaila/test.ts      |    0
+   src/app/JathanHenery/test.ts     |    0
+   src/app/SebastianTiffany/test.ts |    0
+   src/app/TonyDanica/test.ts       |    0
+   src/app/layout.tsx               |   25 +
+   src/app/page.tsx                 |   37 +
+   src/env.js                       |   44 +
+   src/server/db/index.ts           |   18 +
+   src/server/db/schema.ts          |   27 +
+   src/styles/globals.css           |    6 +
+   start-database.sh                |   83 ++
+   tsconfig.json                    |   42 +
+   22 files changed, 2352 insertions(+)

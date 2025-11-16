@@ -1,0 +1,16 @@
+  charts                               50c370c [origin/charts] exporting
+* main                                 50c370c [origin/main] exporting
+  notifacations                        05cf40a yessah
+  notifications                        c7ca34f [origin/notifications: behind 1] notifications are functional
+  remotes/origin/Form                  eec5fed Jathan Form first commit
+  remotes/origin/HEAD                  -> origin/main
+  remotes/origin/charts                50c370c exporting
+  remotes/origin/database              3e2ea52 progress of schema and api updates, and started backend on hierarchy
+  remotes/origin/feature/searchresults efa620c Things I currently had
+  remotes/origin/login                 5ec3ad2 added firebase
+  remotes/origin/main                  50c370c exporting
+  remotes/origin/month                 a459d0b Create LICENSE.txt
+  remotes/origin/navbar                46bf86c Update layout.tsx
+  remotes/origin/notifications         66babc5 adding exporting since it works on my end
+  remotes/origin/prototype             557b0df Update page.tsx
+  remotes/origin/test                  0c8c3a5 test2
