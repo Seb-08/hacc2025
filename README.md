@@ -1,3 +1,24 @@
+##Setup instructions
+1. Clone github repo using VS code
+2. Run pnpm install in terminal first.
+3. If libraries are erroring out, here are all the libraries to be installed:
+- pnpm install @engagespot/react-component
+- pnpm install @engagespot/node
+- pnpm add react-to-print
+4. If you are still having errors try these:
+- Make sure your node.js is up to date
+- Download the live server extension
+- src>styles>global css>line 2>@plugin “daisyui”;
+5. Or try these commands:
+- pnpm add -D daisyui@latest
+- pnpm install tailwindcss
+- pnpm add uploadthing
+- pnpm add @uploadthing/react
+- Invoke-WebRequest https://get.pnpm.io/install.ps1 -UseBasicParsing | Invoke-Expression
+5. If you are still having issues, try open and reopen vs code
+6. Create an .env file in the folder that you cloned the repo to. We will dm you the env files on slack
+
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
@@ -27,3 +48,5 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+
