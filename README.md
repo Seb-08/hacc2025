@@ -17,7 +17,7 @@
 4. If you are still having errors try these:
 - Make sure your node.js is up to date
 - Download the live server extension
-- src>styles>global css>line 2>@plugin “daisyui”;
+
 5. Or try these commands:
 - pnpm add -D daisyui@latest
 - pnpm install tailwindcss
