@@ -15,7 +15,6 @@ export const metadata: Metadata = {
 };
 
 const baseNavItems = [
-  { name: 'Homepage', path: '/' },
   { name: 'Reports', path: '/reports' },
 ];
 
@@ -29,13 +28,10 @@ export default async function RootLayout({
 }) {
   const user = await getCurrentUser();
 
-  // Build nav based on role
   const navItems = [...baseNavItems];
-
   if (user && (user.role === 'vendor' || user.role === 'admin')) {
     navItems.push(editorNav);
   }
-
   if (user && user.role === 'admin') {
     navItems.push(reviewNav);
   }
@@ -54,21 +50,22 @@ export default async function RootLayout({
             color: '#FFFFFF',
           }}
         >
-          <div className="max-w-[2250px] mx-auto flex items-center justify-between px-10 py-5">
+          <div className="w-full px-4 sm:px-6 lg:px-10 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
             {/* Logo + Title */}
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <img
                 src="https://lq4he0tkzv.ufs.sh/f/0EzP3waMS4PR39jxiXn6iEPtmsdYQDK9wLB50rhIX7jqeSH1"
                 alt="Hawai‘i ETS Logo"
-                className="h-12 w-auto"
+                className="h-10 w-auto sm:h-12"
               />
-              <h1 className="text-lg font-semibold tracking-wide">
+              <h1 className="text-base sm:text-lg font-semibold tracking-wide">
                 Hawai‘i Enterprise Technology Services
               </h1>
-            </div>
+            </Link>
 
-            {/* Nav + Auth */}
-            <nav className="flex items-center gap-8 text-sm font-medium">
+            {/* NAVIGATION */}
+            <nav className="flex flex-wrap items-center justify-center md:justify-end gap-3 sm:gap-5 md:gap-8 text-xs sm:text-sm font-medium">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -79,27 +76,25 @@ export default async function RootLayout({
                   <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full" />
                 </Link>
               ))}
-            {user && <NotificationBell />}
-              {/* Login / Logout dynamic button */}
+
+              {user && <NotificationBell />}
+
+              {/* PERSON ICON LOGIN */}
               <AuthButtonClient />
             </nav>
           </div>
 
-          {/* Divider */}
-          <div className="h-[4px] w-full bg-[#006D68]" />
+          <div className="h-[3px] w-full bg-[#006D68]" />
         </header>
 
-        {/* Spacer for fixed header */}
-        <div className="h-[100px]" />
+        <div className="h-[88px] sm:h-[96px]" />
 
-        {/* MAIN CONTENT */}
-        <main className="flex-grow max-w-[1250px] mx-auto px-10 py-10">
+        <main className="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
           {children}
         </main>
 
-        {/* FOOTER */}
         <footer
-          className="text-center py-6 text-sm border-t border-[#2FB8AC] mt-auto"
+          className="text-center py-5 sm:py-6 text-xs sm:text-sm border-t border-[#2FB8AC] mt-auto"
           style={{ backgroundColor: '#002C3E', color: '#FFFFFF' }}
         >
           <p>
