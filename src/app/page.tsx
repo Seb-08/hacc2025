@@ -56,10 +56,7 @@ export default function Homepage() {
 
       <div className="h-[6px] w-full bg-gradient-to-r from-[#00796B] to-[#2FA8A3]" />
 
-      <section className="py-20 bg-white text-center border-t border-gray-200">
-        <h3 className="text-2xl font-bold">Quick Access</h3>
-        {/* You can add featured links, stats, etc. here later */}
-      </section>
+      
     </main>
   );
 }
