@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Calendar,
@@ -11,11 +11,10 @@ import {
   Sparkles,
   CheckCircle2,
 } from 'lucide-react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import type { ChartData, ChartOptions } from 'chart.js';
 import '~/lib/chartSetup';
-import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useReactToPrint } from 'react-to-print';
 
 // Matches your DB snapshot shape
 type Snapshot = {
@@ -61,8 +60,12 @@ export default function ReportViewPage() {
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const [selectedSnapshot, setSelectedSnapshot] = useState<FullReport | null>(null);
-  const [selectedSnapshotId, setSelectedSnapshotId] = useState<number | null>(null);
+  const [selectedSnapshot, setSelectedSnapshot] = useState<FullReport | null>(
+    null,
+  );
+  const [selectedSnapshotId, setSelectedSnapshotId] = useState<number | null>(
+    null,
+  );
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -166,11 +169,11 @@ export default function ReportViewPage() {
   const componentRef = useRef<HTMLDivElement | null>(null);
 
   const handlePrint = useReactToPrint({
-  contentRef: componentRef,
-  documentTitle: selectedSnapshot?.name
-    ? `${selectedSnapshot.name} Report`
-    : "Report",
-});
+    contentRef: componentRef,
+    documentTitle: selectedSnapshot?.name
+      ? `${selectedSnapshot.name} Report`
+      : 'Report',
+  });
 
   if (loading) {
     return <p className="p-6 text-gray-600">Loading snapshots...</p>;
@@ -207,7 +210,9 @@ export default function ReportViewPage() {
       snapshots.find((s) => s.id === selectedSnapshotId)) ||
     snapshots[0];
 
-  // Chart data (no hooks)
+  // ========= CHART DATA HELPERS =========
+
+  // 💰 Financial bar chart
   const chartData: ChartData<'bar'> | null = financialData
     ? {
         labels: ['Original Contract', 'Paid to Date'],
@@ -244,279 +249,554 @@ export default function ReportViewPage() {
     },
   };
 
-  const snapshotTakenDate =
-    activeSnapshot?.createdAt ?? submittedAt ?? '';
+  // 📅 1. Schedule timeline – horizontal bar (x = days until target date)
+  const scheduleTimelineData: ChartData<'bar'> | null = (() => {
+    if (!scheduleScope?.length) return null;
+
+    const rowsWithDate = scheduleScope.filter((row: any) => row.targetDate);
+    if (!rowsWithDate.length) return null;
+
+    // Use snapshot date as reference if available, else submittedAt, else "today"
+    const referenceDate =
+      (activeSnapshot?.createdAt && new Date(activeSnapshot.createdAt)) ||
+      (submittedAt && new Date(submittedAt)) ||
+      new Date();
+
+    if (Number.isNaN(referenceDate.getTime())) return null;
+
+    const dayMs = 1000 * 60 * 60 * 24;
+
+    const labels = rowsWithDate.map(
+      (row: any, i: number) => row.task || `Milestone ${i + 1}`,
+    );
+
+    const data = rowsWithDate.map((row: any) => {
+      const target = new Date(row.targetDate);
+      if (Number.isNaN(target.getTime())) return 0;
+      // Positive = days remaining, Negative = days past due
+      return Math.round((target.getTime() - referenceDate.getTime()) / dayMs);
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Days until target date',
+          data,
+          backgroundColor: 'rgba(59,130,246,0.6)',
+          borderColor: 'rgba(59,130,246,1)',
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
+
+  const scheduleTimelineOptions: ChartOptions<'bar'> = {
+    indexAxis: 'y', // horizontal
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) =>
+            `${ctx.raw} day${ctx.raw === 1 ? '' : 's'} until target date`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: false,
+        title: {
+          display: true,
+          text: 'Days until target date (negative = past due)',
+        },
+      },
+      y: {
+        title: {
+          display: false,
+        },
+      },
+    },
+  };
+
+  // 📊 2. Scope completion – horizontal bar (% complete)
+  const scopeCompletionData: ChartData<'bar'> | null = (() => {
+    if (!scheduleScope?.length) return null;
+
+    const labels = scheduleScope.map(
+      (row: any, i: number) => row.task || `Milestone ${i + 1}`,
+    );
+    const data = scheduleScope.map((row: any) =>
+      Number.isFinite(Number(row.completionPercent))
+        ? Number(row.completionPercent)
+        : 0,
+    );
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Completion (%)',
+          data,
+          backgroundColor: 'rgba(16,185,129,0.6)',
+          borderColor: 'rgba(16,185,129,1)',
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
+
+  const scopeCompletionOptions: ChartOptions<'bar'> = {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.raw}% complete`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 100,
+        title: {
+          display: true,
+          text: 'Completion (%)',
+        },
+      },
+      y: {
+        title: { display: false },
+      },
+    },
+  };
+
+  // 🥧 3. Issues status – pie (Open vs Closed)
+  const issuesStatusPieData: ChartData<'pie'> | null = (() => {
+    if (!issues?.length) return null;
+
+    const closed = issues.filter(
+      (issue: any) =>
+        String(issue.status || '').toUpperCase() === 'CLOSED',
+    ).length;
+    const open = issues.length - closed;
+
+    if (open === 0 && closed === 0) return null;
+
+    return {
+      labels: ['Open Issues', 'Closed Issues'],
+      datasets: [
+        {
+          data: [open, closed],
+          backgroundColor: [
+            'rgba(239,68,68,0.8)', // red
+            'rgba(34,197,94,0.8)', // green
+          ],
+          borderColor: ['rgba(239,68,68,1)', 'rgba(34,197,94,1)'],
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
+
+  const issuesStatusPieOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    },
+  };
+
+  // 🥧 4. Milestone completion – pie (100% vs <100%)
+  const milestonesCompletionPieData: ChartData<'pie'> | null = (() => {
+    if (!scheduleScope?.length) return null;
+
+    let completed = 0;
+    let notCompleted = 0;
+
+    for (const row of scheduleScope) {
+      const pct = Number(row.completionPercent ?? 0);
+      if (pct >= 100) completed += 1;
+      else notCompleted += 1;
+    }
+
+    if (completed === 0 && notCompleted === 0) return null;
+
+    return {
+      labels: ['Completed Milestones', 'Incomplete Milestones'],
+      datasets: [
+        {
+          data: [completed, notCompleted],
+          backgroundColor: [
+            'rgba(34,197,94,0.8)',
+            'rgba(251,191,36,0.8)',
+          ],
+          borderColor: ['rgba(34,197,94,1)', 'rgba(251,191,36,1)'],
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
+
+  const milestonesCompletionPieOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    },
+  };
+
+  const snapshotTakenDate = activeSnapshot?.createdAt ?? submittedAt ?? '';
 
   return (
     <div>
-       <div className="flex justify-end mb-4">
+      <div className="mb-4 flex justify-end">
         <button
-        onClick={handlePrint}
-        className="px-4 py-2 bg-[#2FB8AC] text-white rounded-md shadow hover:bg-[#00796B]">
-        Export as PDF
-      </button>
+          onClick={handlePrint}
+          className="rounded-md bg-[#2FB8AC] px-4 py-2 text-white shadow hover:bg-[#00796B]"
+        >
+          Export as PDF
+        </button>
       </div>
-    <div className="p-6 md:p-10 space-y-10" ref={componentRef}>
-      {/* 🔹 AI Summary */}
-      <div className="bg-gradient-to-r from-[#E0F7F5] to-[#F5FBFF] border border-[#B8E6E0] rounded-2xl p-4 flex gap-3 items-start shadow-sm">
-        <div className="mt-1">
-          <Sparkles className="w-5 h-5 text-[#00796B]" />
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-wide text-[#00796B] font-semibold">
-            AI Overview
-          </p>
-          {summaryLoading ? (
-            <p className="text-sm text-gray-600 mt-1">
-              Generating a brief summary of this report...
+      <div className="space-y-10 p-6 md:p-10" ref={componentRef}>
+        {/* 🔹 AI Summary */}
+        <div className="flex items-start gap-3 rounded-2xl border border-[#B8E6E0] bg-gradient-to-r from-[#E0F7F5] to-[#F5FBFF] p-4 shadow-sm">
+          <div className="mt-1">
+            <Sparkles className="h-5 w-5 text-[#00796B]" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#00796B]">
+              AI Overview
             </p>
-          ) : summaryError ? (
-            <p className="text-sm text-gray-500 mt-1">{summaryError}</p>
-          ) : summary ? (
-            <p className="text-sm text-gray-800 mt-1">{summary}</p>
-          ) : (
-            <p className="text-sm text-gray-500 mt-1">
-              Summary not available for this snapshot.
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* 🔹 Header & Signature */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-800">
-            {name || 'Untitled Report'}
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Department:{' '}
-            <span className="font-medium">{department || '—'}</span> · Start:{' '}
-            {startDate ? formatDate(startDate) : '—'}
-          </p>
-
-          {/* Snapshot selector */}
-          {snapshots.length > 0 && (
-            <div className="mt-4">
-              <label className="text-xs text-gray-600 mb-1 block">
-                📅 View older approved monthly reports:
-              </label>
-              <select
-                value={selectedSnapshotId ?? snapshots[0]?.id}
-                onChange={(e) =>
-                  handleSnapshotSelect(Number(e.target.value))
-                }
-                className="border rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-teal-500"
-              >
-                {snapshots.map((snap) => (
-                  <option key={snap.id} value={snap.id}>
-                    {formatDate(snap.createdAt)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col items-end gap-3">
-          <button
-            onClick={() => router.push('/reports')}
-            className="px-4 py-2 rounded-lg border text-sm hover:bg-gray-50"
-          >
-            Back to Reports
-          </button>
-
-          {/* ✅ Signature / Approval badge */}
-          {activeSnapshot?.signatureUrl && activeSnapshot.signatureName && (
-            <div className="mt-1 bg-white border border-emerald-200 rounded-xl px-3 py-2 shadow-sm flex flex-col items-end gap-1 w-[230px]">
-              <div className="flex items-center gap-1 text-emerald-700 text-[10px] font-semibold uppercase">
-                <CheckCircle2 className="w-3 h-3" />
-                Approved Snapshot
-              </div>
-              <p className="text-[10px] text-gray-500">
-                Signed by{' '}
-                <span className="font-semibold text-gray-800">
-                  {activeSnapshot.signatureName}
-                </span>
-                {activeSnapshot.approvedAt && (
-                  <>
-                    {' '}
-                    on{' '}
-                    <span className="text-gray-700">
-                      {formatDate(activeSnapshot.approvedAt)}
-                    </span>
-                  </>
-                )}
+            {summaryLoading ? (
+              <p className="mt-1 text-sm text-gray-600">
+                Generating a brief summary of this report...
               </p>
-              <div className="mt-1 w-full flex justify-end">
-                <div className="border border-gray-200 rounded-md bg-gray-50 p-1 max-h-[52px] max-w-[150px] overflow-hidden flex items-center justify-center">
-                  <img
-                    src={activeSnapshot.signatureUrl}
-                    alt="Approver signature"
-                    className="max-h-12 w-auto object-contain opacity-90"
+            ) : summaryError ? (
+              <p className="mt-1 text-sm text-gray-500">{summaryError}</p>
+            ) : summary ? (
+              <p className="mt-1 text-sm text-gray-800">{summary}</p>
+            ) : (
+              <p className="mt-1 text-sm text-gray-500">
+                Summary not available for this snapshot.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* 🔹 Header & Signature */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-800">
+              {name || 'Untitled Report'}
+            </h1>
+            <p className="mt-1 text-gray-600">
+              Department:{' '}
+              <span className="font-medium">{department || '—'}</span> · Start:{' '}
+              {startDate ? formatDate(startDate) : '—'}
+            </p>
+
+            {/* Snapshot selector */}
+            {snapshots.length > 0 && (
+              <div className="mt-4">
+                <label className="mb-1 block text-xs text-gray-600">
+                  📅 View older approved monthly reports:
+                </label>
+                <select
+                  value={selectedSnapshotId ?? snapshots[0]?.id}
+                  onChange={(e) =>
+                    handleSnapshotSelect(Number(e.target.value))
+                  }
+                  className="rounded-lg border bg-white px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-teal-500"
+                >
+                  {snapshots.map((snap) => (
+                    <option key={snap.id} value={snap.id}>
+                      {formatDate(snap.createdAt)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col items-end gap-3">
+            <button
+              onClick={() => router.push('/reports')}
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-50"
+            >
+              Back to Reports
+            </button>
+
+            {/* ✅ Signature / Approval badge */}
+            {activeSnapshot?.signatureUrl && activeSnapshot.signatureName && (
+              <div className="mt-1 flex w-[230px] flex-col items-end gap-1 rounded-xl border border-emerald-200 bg-white px-3 py-2 shadow-sm">
+                <div className="flex items-center gap-1 text-[10px] font-semibold uppercase text-emerald-700">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Approved Snapshot
+                </div>
+                <p className="text-[10px] text-gray-500">
+                  Signed by{' '}
+                  <span className="font-semibold text-gray-800">
+                    {activeSnapshot.signatureName}
+                  </span>
+                  {activeSnapshot.approvedAt && (
+                    <>
+                      {' '}
+                      on{' '}
+                      <span className="text-gray-700">
+                        {formatDate(activeSnapshot.approvedAt)}
+                      </span>
+                    </>
+                  )}
+                </p>
+                <div className="mt-1 flex w-full justify-end">
+                  <div className="flex max-h-[52px] max-w-[150px] items-center justify-center overflow-hidden rounded-md border border-gray-200 bg-gray-50 p-1">
+                    <img
+                      src={activeSnapshot.signatureUrl}
+                      alt="Approver signature"
+                      className="max-h-12 w-auto object-contain opacity-90"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 🔹 Top Summary Row */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* General Info */}
+          <div className="flex flex-col items-start rounded-xl border bg-white p-6 shadow-sm">
+            <Flag className="mb-3 text-teal-600" />
+            <h2 className="mb-1 text-lg font-semibold">General Information</h2>
+            <p className="text-sm text-gray-600">
+              Department: {department || '—'}
+            </p>
+            <p className="text-sm text-gray-600">
+              Start Date: {startDate ? formatDate(startDate) : '—'}
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              Snapshot Taken: {formatDate(snapshotTakenDate)}
+            </p>
+          </div>
+
+          {/* Financial Summary (wide) */}
+          <div className="flex flex-col rounded-xl border bg-white p-6 shadow-sm lg:col-span-2">
+            <div className="mb-3 flex items-center gap-2">
+              <DollarSign className="text-green-600" />
+              <h2 className="text-lg font-semibold">Financial Summary</h2>
+            </div>
+
+            {financialData ? (
+              <div className="flex flex-col items-stretch gap-6 md:flex-row">
+                <div className="flex-1">
+                  <p className="mb-1 text-sm text-gray-600">
+                    Original Contract:{' '}
+                    <span className="font-semibold">
+                      $
+                      {Number(
+                        financialData.originalContractAmt ?? 0,
+                      ).toLocaleString()}
+                    </span>
+                  </p>
+                  <p className="mb-3 text-sm text-gray-600">
+                    Paid to Date:{' '}
+                    <span className="font-semibold">
+                      $
+                      {Number(
+                        financialData.paidToDate ?? 0,
+                      ).toLocaleString()}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    This chart compares the total contract value with payments
+                    made to date for a quick snapshot of financial health.
+                  </p>
+                </div>
+                <div className="flex flex-1 items-center">
+                  {chartData && (
+                    <div className="h-56 w-full">
+                      <Bar data={chartData} options={chartOptions} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600">No financial data.</p>
+            )}
+          </div>
+        </div>
+
+        {/* 🔹 Top Pie Charts Row (side by side) */}
+        {(issuesStatusPieData || milestonesCompletionPieData) && (
+          <div className="grid gap-6 md:grid-cols-2">
+            {issuesStatusPieData && (
+              <div className="rounded-xl border bg-white p-6 shadow-sm">
+                <h3 className="mb-2 text-sm font-semibold text-gray-700">
+                  Issue Status Overview
+                </h3>
+                <p className="mb-3 text-xs text-gray-500">
+                  Distribution of open vs closed issues in this report.
+                </p>
+                <div className="mx-auto h-64">
+                  <Pie
+                    data={issuesStatusPieData}
+                    options={issuesStatusPieOptions}
                   />
                 </div>
               </div>
+            )}
+
+            {milestonesCompletionPieData && (
+              <div className="rounded-xl border bg-white p-6 shadow-sm">
+                <h3 className="mb-2 text-sm font-semibold text-gray-700">
+                  Milestone Completion Overview
+                </h3>
+                <p className="mb-3 text-xs text-gray-500">
+                  Completed milestones are those at 100% completion.
+                </p>
+                <div className="mx-auto h-64">
+                  <Pie
+                    data={milestonesCompletionPieData}
+                    options={milestonesCompletionPieOptions}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 🔹 Issues */}
+        <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <ClipboardList className="text-indigo-600" /> All Issues
+          </h2>
+          {!issues.length ? (
+            <p className="text-gray-500">No issues recorded.</p>
+          ) : (
+            <div className="grid gap-4">
+              {issues.map((issue: any, i: number) => (
+                <div
+                  key={issue.id ?? i}
+                  className="rounded-lg border bg-gray-50 p-4"
+                >
+                  <h3 className="mb-1 font-medium text-gray-800">
+                    Issue {i + 1}: {issue.description || 'No description'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Impact: {issue.impact} · Likelihood: {issue.likelihood} ·
+                    Risk: {issue.overallRisk ?? 0}/10
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Recommendation: {issue.recommendation || '—'}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Status: {issue.status} · Start:{' '}
+                    {issue.startDate ? formatDate(issue.startDate) : '—'}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
         </div>
-      </div>
 
-      {/* 🔹 Top Summary Row */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* General Info */}
-        <div className="p-6 rounded-xl border bg-white shadow-sm flex flex-col items-start">
-          <Flag className="text-teal-600 mb-3" />
-          <h2 className="font-semibold text-lg mb-1">General Information</h2>
-          <p className="text-gray-600 text-sm">
-            Department: {department || '—'}
-          </p>
-          <p className="text-gray-600 text-sm">
-            Start Date: {startDate ? formatDate(startDate) : '—'}
-          </p>
-          <p className="text-gray-600 text-sm mt-2">
-            Snapshot Taken: {formatDate(snapshotTakenDate)}
-          </p>
-        </div>
-
-        {/* Financial Summary (wide) */}
-        <div className="p-6 rounded-xl border bg-white shadow-sm flex flex-col lg:col-span-2">
-          <div className="flex items-center gap-2 mb-3">
-            <DollarSign className="text-green-600" />
-            <h2 className="font-semibold text-lg">Financial Summary</h2>
-          </div>
-
-          {financialData ? (
-            <div className="flex flex-col md:flex-row gap-6 items-stretch">
-              <div className="flex-1">
-                <p className="text-gray-600 text-sm mb-1">
-                  Original Contract:{' '}
-                  <span className="font-semibold">
-                    $
-                    {Number(
-                      financialData.originalContractAmt ?? 0,
-                    ).toLocaleString()}
-                  </span>
-                </p>
-                <p className="text-gray-600 text-sm mb-3">
-                  Paid to Date:{' '}
-                  <span className="font-semibold">
-                    $
-                    {Number(
-                      financialData.paidToDate ?? 0,
-                    ).toLocaleString()}
-                  </span>
-                </p>
-                <p className="text-gray-500 text-xs">
-                  This chart compares the total contract value with payments made
-                  to date for a quick snapshot of financial health.
-                </p>
+        {/* 🔹 Schedule & Scope */}
+        <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <Calendar className="text-amber-600" /> Schedule & Scope
+          </h2>
+          {!scheduleScope.length ? (
+            <p className="text-gray-500">No milestones recorded.</p>
+          ) : (
+            <div className="space-y-6">
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-t text-sm">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-3 py-2 text-left">Task</th>
+                      <th className="px-3 py-2 text-left">Target Date</th>
+                      <th className="px-3 py-2 text-left">% Complete</th>
+                      <th className="px-3 py-2 text-left">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scheduleScope.map((row: any, i: number) => (
+                      <tr
+                        key={row.id ?? i}
+                        className="border-b hover:bg-gray-50"
+                      >
+                        <td className="px-3 py-2">{row.task}</td>
+                        <td className="px-3 py-2">
+                          {row.targetDate ? formatDate(row.targetDate) : '—'}
+                        </td>
+                        <td className="px-3 py-2">
+                          {row.completionPercent ?? 0}%
+                        </td>
+                        <td className="px-3 py-2">{row.notes || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="flex-1 flex items-center">
-                {chartData && (
-                  <div className="w-full h-56">
-                    <Bar data={chartData} options={chartOptions} />
+
+              {/* Charts row */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {scheduleTimelineData && (
+                  <div className="rounded-xl border bg-gray-50 p-4">
+                    <h3 className="mb-2 text-sm font-semibold text-gray-700">
+                      Schedule Timeline
+                    </h3>
+                    <p className="mb-3 text-xs text-gray-500">
+                      Days remaining (or past due) until each milestone target
+                      date, relative to the snapshot date.
+                    </p>
+                    <div className="h-72">
+                      <Bar
+                        data={scheduleTimelineData}
+                        options={scheduleTimelineOptions}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {scopeCompletionData && (
+                  <div className="rounded-xl border bg-gray-50 p-4">
+                    <h3 className="mb-2 text-sm font-semibold text-gray-700">
+                      Scope Completion by Milestone
+                    </h3>
+                    <p className="mb-3 text-xs text-gray-500">
+                      Shows completion percentage for each milestone.
+                    </p>
+                    <div className="h-72">
+                      <Bar
+                        data={scopeCompletionData}
+                        options={scopeCompletionOptions}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
             </div>
+          )}
+        </div>
+
+        {/* 🔹 Appendix */}
+        <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <FileText className="text-purple-600" /> Appendix
+          </h2>
+          {!appendix[0]?.content ? (
+            <p className="text-gray-500">No appendix notes provided.</p>
           ) : (
-            <p className="text-gray-600 text-sm">No financial data.</p>
+            <p className="whitespace-pre-wrap text-gray-700">
+              {appendix[0].content}
+            </p>
           )}
         </div>
       </div>
-
-      {/* 🔹 Issues */}
-      <div className="bg-white border rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <ClipboardList className="text-indigo-600" /> All Issues
-        </h2>
-        {!issues.length ? (
-          <p className="text-gray-500">No issues recorded.</p>
-        ) : (
-          <div className="grid gap-4">
-            {issues.map((issue: any, i: number) => (
-              <div
-                key={issue.id ?? i}
-                className="border rounded-lg p-4 bg-gray-50"
-              >
-                <h3 className="font-medium text-gray-800 mb-1">
-                  Issue {i + 1}: {issue.description || 'No description'}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Impact: {issue.impact} · Likelihood: {issue.likelihood} · Risk:{' '}
-                  {issue.overallRisk ?? 0}/10
-                </p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Recommendation: {issue.recommendation || '—'}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  Status: {issue.status} · Start:{' '}
-                  {issue.startDate ? formatDate(issue.startDate) : '—'}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* 🔹 Schedule & Scope */}
-      <div className="bg-white border rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <Calendar className="text-amber-600" /> Schedule & Scope
-        </h2>
-        {!scheduleScope.length ? (
-          <p className="text-gray-500">No milestones recorded.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm border-t">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="text-left px-3 py-2">Task</th>
-                  <th className="text-left px-3 py-2">Target Date</th>
-                  <th className="text-left px-3 py-2">% Complete</th>
-                  <th className="text-left px-3 py-2">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {scheduleScope.map((row: any, i: number) => (
-                  <tr
-                    key={row.id ?? i}
-                    className="border-b hover:bg-gray-50"
-                  >
-                    <td className="px-3 py-2">{row.task}</td>
-                    <td className="px-3 py-2">
-                      {row.targetDate
-                        ? formatDate(row.targetDate)
-                        : '—'}
-                    </td>
-                    <td className="px-3 py-2">
-                      {row.completionPercent ?? 0}%
-                    </td>
-                    <td className="px-3 py-2">
-                      {row.notes || '—'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* 🔹 Appendix */}
-      <div className="bg-white border rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <FileText className="text-purple-600" /> Appendix
-        </h2>
-        {!appendix[0]?.content ? (
-          <p className="text-gray-500">No appendix notes provided.</p>
-        ) : (
-          <p className="text-gray-700 whitespace-pre-wrap">
-            {appendix[0].content}
-          </p>
-        )}
-      </div>
-    </div>
     </div>
   );
 }
