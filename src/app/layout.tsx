@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 };
 
 const baseNavItems = [
+  { name: 'Homepage', path: '/' },
   { name: 'Reports', path: '/reports' },
 ];
 
