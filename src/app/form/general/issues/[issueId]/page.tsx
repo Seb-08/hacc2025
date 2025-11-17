@@ -4,6 +4,24 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useReportDraft } from '~/components/report-draft-provider';
 
+type Level = 'low' | 'medium' | 'high';
+
+function calculateRisk(impact?: Level, likelihood?: Level) {
+  const score = (level?: Level) => {
+    switch (level) {
+      case 'high':
+        return 3;
+      case 'medium':
+        return 2;
+      case 'low':
+      default:
+        return 1;
+    }
+  };
+
+  return score(impact) + score(likelihood); // 2–6
+}
+
 export default function IssuePage() {
   const params = useParams();
 
@@ -31,37 +49,65 @@ function IssueInner({ issueIndexParam }: { issueIndexParam: string }) {
   function update(field: string, value: any) {
     setDraft((d) => {
       const copy = [...d.issues];
-      copy[idx] = { ...copy[idx], [field]: value };
+      const current: any = { ...copy[idx], [field]: value };
+
+      // Always keep overallRisk in sync with impact + likelihood
+      const impact = (current.impact ?? 'low') as Level;
+      const likelihood = (current.likelihood ?? 'low') as Level;
+      current.overallRisk = calculateRisk(impact, likelihood);
+
+      copy[idx] = current;
       return { ...d, issues: copy };
     });
   }
+
+  const calculatedRisk = calculateRisk(
+    (issue.impact ?? 'low') as Level,
+    (issue.likelihood ?? 'low') as Level,
+  );
 
   return (
     <div>
       <h1 className="text-2xl font-semibold">Edit Issue {idx + 1}</h1>
       <p className="text-gray-600 mt-1">Update details for this specific issue.</p>
 
-      <div className="grid md:grid-cols-2 gap-4 mt-6">
+      {/* Layout: Description left, Recommendation (bigger) + fields right */}
+      <div className="grid md:grid-cols-2 gap-6 mt-6">
+        {/* LEFT COLUMN — DESCRIPTION */}
         <div>
           <label className="text-sm font-medium">Description</label>
           <textarea
             className="w-full mt-1 border rounded-lg px-3 py-2"
-            rows={4}
+            rows={10}
             value={issue.description ?? ''}
             onChange={(e) => update('description', e.target.value)}
           />
         </div>
 
+        {/* RIGHT COLUMN — RECOMMENDATION + META */}
         <div>
-          <label className="text-sm font-medium">Start Date</label>
-          <input
-            type="date"
-            className="w-full mt-1 border rounded-lg px-3 py-2"
-            value={issue.startDate ?? ''}
-            onChange={(e) => update('startDate', e.target.value)}
-          />
+          {/* Bigger recommendation box, at the top on the right */}
+          <div>
+            <label className="text-sm font-medium">Recommendation</label>
+            <textarea
+              className="w-full mt-1 border rounded-lg px-3 py-2"
+              rows={6}
+              value={issue.recommendation ?? ''}
+              onChange={(e) => update('recommendation', e.target.value)}
+            />
+          </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-4">
+            <label className="text-sm font-medium">Start Date</label>
+            <input
+              type="date"
+              className="w-full mt-1 border rounded-lg px-3 py-2"
+              value={issue.startDate ?? ''}
+              onChange={(e) => update('startDate', e.target.value)}
+            />
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
             <div>
               <label className="text-xs font-medium">Impact</label>
               <select
@@ -92,29 +138,19 @@ function IssueInner({ issueIndexParam }: { issueIndexParam: string }) {
               </select>
             </div>
 
+            {/* 🔒 Read-only, auto-calculated risk */}
             <div>
-              <label className="text-xs font-medium">Overall Risk (0–10)</label>
-              <input
-                type="number"
-                min={0}
-                max={10}
-                className="w-full mt-1 border rounded-lg px-2 py-2"
-                value={issue.overallRisk ?? 0}
-                onChange={(e) => update('overallRisk', Number(e.target.value))}
-              />
+              <label className="text-xs font-medium">Overall Risk (out of 6)</label>
+              <div className="w-full mt-1 border rounded-lg px-2 py-2 bg-gray-50 text-sm">
+                {calculatedRisk} / 6
+              </div>
+              <p className="mt-1 text-[11px] text-gray-500">
+                Calculated as Impact + Likelihood (Low = 1, Medium = 2, High = 3).
+              </p>
             </div>
           </div>
 
-          <div className="mt-3">
-            <label className="text-xs font-medium">Recommendation</label>
-            <input
-              className="w-full mt-1 border rounded-lg px-2 py-2"
-              value={issue.recommendation ?? ''}
-              onChange={(e) => update('recommendation', e.target.value)}
-            />
-          </div>
-
-          <div className="mt-3">
+          <div className="mt-4">
             <label className="text-xs font-medium">Status</label>
             <select
               className="w-full mt-1 border rounded-lg px-2 py-2"

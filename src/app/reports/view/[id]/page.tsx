@@ -203,7 +203,7 @@ export default function ReportViewPage() {
   } = selectedSnapshot;
 
   const financialData = financials[0];
-
+  
   // Active snapshot meta (for signature and date)
   const activeSnapshot =
     (selectedSnapshotId &&
@@ -688,7 +688,7 @@ export default function ReportViewPage() {
                   </h3>
                   <p className="text-sm text-gray-600">
                     Impact: {issue.impact} · Likelihood: {issue.likelihood} ·
-                    Risk: {issue.overallRisk ?? 0}/10
+                    Risk: {issue.overallRisk ?? 0}/6
                   </p>
                   <p className="mt-1 text-sm text-gray-600">
                     Recommendation: {issue.recommendation || '—'}
@@ -750,8 +750,7 @@ export default function ReportViewPage() {
                       Schedule Timeline
                     </h3>
                     <p className="mb-3 text-xs text-gray-500">
-                      Days remaining (or past due) until each milestone target
-                      date, relative to the snapshot date.
+                      Days until each milestone target date.
                     </p>
                     <div className="h-72">
                       <Bar
