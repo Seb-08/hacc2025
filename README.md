@@ -1,11 +1,12 @@
 ##Notes
-This is the repo where we developed our app
-Link to our HACC-issued repo: https://github.com/HACC25/MHS
-- If you would like to see the history of our app there, please check the docs folder.
-Link to deployed app: https://hacc2025.vercel.app
-
-Also just as a notice, we integrated an AI summarizer into our web app but have limited # of clicks per day. Please be mindful of the # of times you click on a report - thank you!
-
+- This our HACC-issued repo
+  - If you would like to see the history of our app, please check the docs folder.
+- Link to our repo: https://github.com/Seb-08/hacc2025
+  - This repo is where we developed our app
+  - Our vercel is connected to this repo
+- Link to deployed app: https://hacc2025.vercel.app
+- Also just as a notice, we integrated an AI summarizer into our web app but have limited # of clicks per day. Please be mindful of the # of times you click on a report - thank you!
+- 
 ##Setup instructions
 1. Clone github repo using VS code
 2. Run pnpm install in terminal first.
