@@ -127,12 +127,19 @@ export default function ReportsPage() {
     <main className="max-w-6xl mx-auto px-6 py-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#002C3E]">
-          Reports Overview
-        </h1>
-        <p className="text-sm text-gray-600">
-          Browse and search IV&V reports across Hawaiʻi ETS projects.
-        </p>
+        <div className = "flex items-center gap-4">
+          <button className="btn rounded-box bg-[#032A3A]">          
+              <Link href="../">&larr; Back</Link>
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-[#002C3E]">
+              Reports Overview
+            </h1>
+            <p className="text-sm text-gray-600">
+              Browse and search IV&V reports across Hawaiʻi ETS projects.
+            </p>
+          </div>
+        </div>
 
         {/* Search + Filters + Sort */}
         <div className="mt-4 flex flex-col gap-3">
