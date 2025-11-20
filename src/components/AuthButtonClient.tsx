@@ -15,7 +15,7 @@ type MeResponse =
 
 // ---------------- ICONS ----------------
 
-// Login with person icon
+// Circle with person icon
 function CirclePersonIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -101,6 +101,7 @@ export default function AuthButtonClient() {
   async function handleClick() {
     if (loading) return;
 
+    // Not logged in → go to login
     if (!user) {
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
@@ -110,6 +111,7 @@ export default function AuthButtonClient() {
       return;
     }
 
+    // Logged in → logout → go to homepage
     try {
       await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' });
     } catch (err) {
@@ -119,20 +121,18 @@ export default function AuthButtonClient() {
     setUser(null);
 
     if (typeof window !== 'undefined') {
-      // Forced reload with fresh cookies
-      window.location.href = '/login';
+      window.location.href = '/';
     } else {
       router.refresh();
-      router.push('/login');
+      router.push('/');
     }
   }
 
   const tooltipText = loading ? 'Checking...' : user ? 'Sign out' : 'Sign in';
 
-  // ---------------- RENDER ----------------
-
   return (
     <div className="relative group">
+      {/* Main icon button */}
       <button
         onClick={handleClick}
         className="
@@ -142,7 +142,6 @@ export default function AuthButtonClient() {
           bg-white/20 hover:bg-white
           transition-all duration-300
         "
-        title={tooltipText}
       >
         {loading ? (
           <CirclePersonIcon className="h-5 w-5" />
@@ -153,17 +152,20 @@ export default function AuthButtonClient() {
         )}
       </button>
 
-      {/* TEAL tooltip */}
+      {/* Fancy dropdown tooltip */}
       <div
         className="
-          absolute right-0 mt-2 px-3 py-1.5 rounded-md
-          bg-[#2FA8A3] text-white text-xs font-medium
-          border border-[#2FA8A3]
-          shadow-lg shadow-[#2FA8A3]/30
+          absolute right-0 mt-2
+          px-3 py-1.5 rounded-md
+          bg-[#2B8985] text-white text-xs font-medium
+          border border-[#2B8985]/70
+          shadow-lg shadow-[#2B8985]/30
           whitespace-nowrap min-w-max
 
-          opacity-0 scale-95 translate-y-1 pointer-events-none
-          group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:pointer-events-auto
+          opacity-0 scale-95 translate-y-1
+          pointer-events-none
+          group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0
+          group-hover:pointer-events-auto
           transition-all duration-200
         "
       >
