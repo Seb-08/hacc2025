@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { unstable_noStore as noStore } from 'next/cache';
 import { getCurrentUser } from '~/lib/auth';
 import AuthButtonClient from '~/components/AuthButtonClient';
 import NotificationBell from './notificationbell';
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
   title: 'Hawai‘i ETS',
   description: 'Enterprise Technology Services – State of Hawai‘i',
 };
+
+export const dynamic = 'force-dynamic';
 
 const baseNavItems = [
   { name: 'Homepage', path: '/' },
@@ -27,6 +30,8 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
+  noStore();
+
   const user = await getCurrentUser();
 
   const navItems = [...baseNavItems];
@@ -51,22 +56,35 @@ export default async function RootLayout({
             color: '#FFFFFF',
           }}
         >
-          <div className="w-full px-4 sm:px-6 lg:px-10 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
+          <div
+            className="
+              w-full 
+              px-3 sm:px-5 lg:px-10 
+              py-3 md:py-4 
+              flex flex-col gap-3 
+              md:flex-row md:items-center md:justify-between
+            "
+          >
             {/* Logo + Title */}
-            <Link href="/" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3">
               <img
                 src="https://lq4he0tkzv.ufs.sh/f/0EzP3waMS4PR39jxiXn6iEPtmsdYQDK9wLB50rhIX7jqeSH1"
                 alt="Hawai‘i ETS Logo"
-                className="h-10 w-auto sm:h-12"
+                className="h-8 w-auto sm:h-10 md:h-12"
               />
-              <h1 className="text-base sm:text-lg font-semibold tracking-wide">
+              <h1 className="text-sm sm:text-base md:text-lg font-semibold tracking-wide leading-snug">
                 Hawai‘i Enterprise Technology Services
               </h1>
             </Link>
 
             {/* NAVIGATION */}
-            <nav className="flex flex-wrap items-center justify-center md:justify-end gap-3 sm:gap-5 md:gap-8 text-xs sm:text-sm font-medium">
+            <nav
+              className="
+                flex flex-wrap items-center justify-center md:justify-end 
+                gap-2 sm:gap-4 md:gap-6 
+                text-[11px] sm:text-xs md:text-sm font-medium
+              "
+            >
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -80,7 +98,6 @@ export default async function RootLayout({
 
               {user && <NotificationBell />}
 
-              {/* PERSON ICON LOGIN */}
               <AuthButtonClient />
             </nav>
           </div>
@@ -88,14 +105,17 @@ export default async function RootLayout({
           <div className="h-[3px] w-full bg-[#006D68]" />
         </header>
 
-        <div className="h-[88px] sm:h-[96px]" />
+        {/* Spacer under fixed header */}
+        <div className="h-[70px] sm:h-[82px] md:h-[96px]" />
 
-        <main className="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
+        {/* MAIN CONTENT */}
+        <main className="flex-grow w-full max-w-5xl mx-auto px-3 sm:px-5 lg:px-10 py-6 sm:py-8 md:py-10">
           {children}
         </main>
 
+        {/* FOOTER */}
         <footer
-          className="text-center py-5 sm:py-6 text-xs sm:text-sm border-t border-[#2FB8AC] mt-auto"
+          className="text-center py-4 sm:py-5 text-xs sm:text-sm border-t border-[#2FB8AC] mt-auto"
           style={{ backgroundColor: '#002C3E', color: '#FFFFFF' }}
         >
           <p>
