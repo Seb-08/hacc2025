@@ -1,11 +1,62 @@
 // Hawai‘i ETS Homepage
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Homepage() {
+  // --- Smooth Typing Effect ---
+const suggestions: string[] = [
+  'Search ETS Reports',
+  'Health',
+  'Human Services',
+  'Commerce and Consumer Affairs',
+];
+
+const [placeholder, setPlaceholder] = useState('');
+const [index, setIndex] = useState(0);
+const [subIndex, setSubIndex] = useState(0);
+const [deleting, setDeleting] = useState(false);
+
+useEffect(() => {
+  const currentText = suggestions[index] ?? ""; 
+
+  const speed = deleting ? 60 : 70;
+
+  const handler = setTimeout(() => {
+    if (!deleting) {
+      // typing forward
+      setPlaceholder(currentText.substring(0, subIndex + 1));
+      setSubIndex((prev) => prev + 1);
+
+      if (subIndex === currentText.length) {
+        setTimeout(() => setDeleting(true), 1200);
+      }
+    } else {
+      // deleting backward
+      setPlaceholder(currentText.substring(0, subIndex - 1));
+      setSubIndex((prev) => prev - 1);
+
+      if (subIndex === 0) {
+        setDeleting(false);
+        setIndex((prev) => (prev + 1) % suggestions.length);
+      }
+    }
+  }, speed);
+
+  return () => clearTimeout(handler);
+}, [subIndex, deleting, index, suggestions]);
+
+
   return (
-    <div className="bg-[#F4FAFA] text-[#002C3E] min-h-[calc(100vh-70px)] sm:min-h-[calc(100vh-82px)] md:min-h-[calc(100vh-96px)] flex items-center justify-center px-4 sm:px-6">
+    <div
+      className="
+        bg-[#F4FAFA] text-[#002C3E]
+        min-h-[calc(100vh-150px)] sm:min-h-[calc(100vh-150px)] md:min-h-[calc(100vh-160px)]
+        flex items-start justify-center
+        pt-8 sm:pt-10 md:pt-12
+        px-4 sm:px-6
+      "
+    >
       <section
         className="
           w-full max-w-4xl mx-auto
@@ -16,7 +67,7 @@ export default function Homepage() {
           Independent Verification and Validation Reports
         </h2>
 
-        {/* ⭐ Original sub-header formatting restored ⭐ */}
+        {/* Original sub-header formatting */}
         <p className="text-gray-700 mb-12 max-w-2xl mx-auto text-lg">
           Enterprise Technology Services (ETS) leads statewide IT strategy, cybersecurity,
           and digital services to better serve the people of Hawai‘i.
@@ -37,7 +88,7 @@ export default function Homepage() {
           <input
             type="text"
             name="q"
-            placeholder="Search ETS Reports"
+            placeholder={placeholder || 'Search ETS Reports'}
             className="
               flex-1 w-full
               rounded-full sm:rounded-l-full sm:rounded-r-none
@@ -45,13 +96,14 @@ export default function Homepage() {
               text-sm sm:text-base md:text-lg 
               px-4 sm:px-6 py-2.5 sm:py-3
               focus:outline-none focus:ring-2 focus:ring-[#2FA8A3] shadow-sm
+              placeholder:text-gray-400
             "
           />
 
           <button
             type="submit"
             className="
-              bg-[#2FA8A3] hover:bg-[#24938f] text-white font-medium
+              bg-[#2FA8A3] hover:bg-[#2B8985] text-white font-medium
               rounded-full sm:rounded-r-full sm:rounded-l-none
               px-5 sm:px-7 md:px-8 py-2.5 sm:py-3 
               text-sm sm:text-base md:text-lg
@@ -67,7 +119,7 @@ export default function Homepage() {
           <a
             href="/reports"
             className="
-              bg-[#2FA8A3] text-white hover:bg-[#24938f] 
+              bg-[#2FA8A3] text-white hover:bg-[#2B8985] 
               text-sm sm:text-base 
               rounded-full px-6 sm:px-8 py-2.5 sm:py-3 
               transition-colors text-center
