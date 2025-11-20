@@ -233,6 +233,10 @@ export default function ReportsPage() {
                     ? new Date(report.startDate).toLocaleDateString()
                     : '—'}
                 </p>
+                <div className="inline-grid *:[grid-area:1/1]">
+                  <div className="status status-success animate-ping"></div>
+                  <div className="status status-success"></div>
+                </div> Running
               </div>
               <div className="mt-3 text-[10px] text-gray-400">
                 Last updated:{' '}
