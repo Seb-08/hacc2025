@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from "next/link";
 
 type Report = {
   id: number;
@@ -72,7 +73,8 @@ export default function ReportsPage() {
 
     let result = reports.filter((r) => {
       const matchesSearch = term
-        ? (r.name || '').toLowerCase().includes(term)
+        ? ((r.name || '').toLowerCase().includes(term) ||
+           (r.department || '').toLowerCase().includes(term))
         : true;
 
       const matchesDept =
@@ -149,7 +151,7 @@ export default function ReportsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by project name..."
+              placeholder="Search by project name or department..."
               className="w-full border rounded-full px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2FA8A3]"
             />
           </div>
@@ -213,7 +215,7 @@ export default function ReportsPage() {
             <button
               key={report.id}
               onClick={() => router.push(`/reports/view/${report.id}`)}
-              className="text-left bg-white border rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-[#2FA8A3] transition flex flex-col justify-between"
+              className="text-left bg-white border rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-[#2FA8A3] hover:bg-[#F5F7F8] transition flex flex-col justify-between"
             >
               <div>
                 <p className="text-[10px] font-semibold uppercase text-[#2FA8A3]">
