@@ -72,7 +72,8 @@ export default function ReportsPage() {
 
     let result = reports.filter((r) => {
       const matchesSearch = term
-        ? (r.name || '').toLowerCase().includes(term)
+        ? ((r.name || '').toLowerCase().includes(term) ||
+           (r.department || '').toLowerCase().includes(term))
         : true;
 
       const matchesDept =
@@ -142,7 +143,7 @@ export default function ReportsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by project name..."
+              placeholder="Search by project name or department..."
               className="w-full border rounded-full px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2FA8A3]"
             />
           </div>
