@@ -1,3 +1,4 @@
+// src/app/api/review/snapshots/[id]/deny/route.ts
 import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { reportSnapshots } from "~/server/db/schema";
