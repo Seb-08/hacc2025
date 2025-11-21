@@ -13,7 +13,12 @@ const geist = Geist({ subsets: ['latin'], display: 'swap' });
 export const metadata: Metadata = {
   title: 'Hawai‘i ETS',
   description: 'Enterprise Technology Services – State of Hawai‘i',
+  icons: {
+    icon: '/icon.png',
+  },
 };
+
+
 
 export const dynamic = 'force-dynamic';
 
