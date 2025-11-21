@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type Report = {
@@ -24,6 +24,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedDept, setSelectedDept] = useState<string>('all');
   const [sort, setSort] = useState<SortOption>('newest'); // default: newest → oldest
+  const [highlighted, setHighlighted] = useState<number>(-1);
 
   // Load reports from API
   useEffect(() => {
@@ -72,7 +73,8 @@ export default function ReportsPage() {
 
     let result = reports.filter((r) => {
       const matchesSearch = term
-        ? (r.name || '').toLowerCase().includes(term)
+        ? ((r.name || '').toLowerCase().includes(term) ||
+           (r.department || '').toLowerCase().includes(term))
         : true;
 
       const matchesDept =
@@ -115,6 +117,74 @@ export default function ReportsPage() {
     return result;
   }, [reports, search, selectedDept, sort]);
 
+  // Suggestions (for autosuggest dropdown) — show matches by name or department
+  const suggestions = useMemo(() => {
+    const term = search.toLowerCase().trim();
+    if (!term) return [];
+
+    const matches = reports
+      .filter((r) => {
+        return (
+          (r.name || '').toLowerCase().includes(term) ||
+          (r.department || '').toLowerCase().includes(term)
+        );
+      })
+      // prefer name matches first
+      .sort((a, b) => {
+        const aName = (a.name || '').toLowerCase();
+        const bName = (b.name || '').toLowerCase();
+        const nameScoreA = aName.includes(term) ? 0 : 1;
+        const nameScoreB = bName.includes(term) ? 0 : 1;
+        return nameScoreA - nameScoreB;
+      })
+      .slice(0, 7);
+
+    return matches;
+  }, [reports, search]);
+
+  const suggestionsRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      const target = e.target as Node | null;
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(target) &&
+        inputRef.current &&
+        !inputRef.current.contains(target)
+      ) {
+        setHighlighted(-1);
+      }
+    }
+
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, []);
+
+  // Handle keyboard navigation in search input
+  function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!suggestions.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlighted((h) => Math.min(h + 1, suggestions.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlighted((h) => Math.max(h - 1, 0));
+    } else if (e.key === 'Enter') {
+      if (highlighted >= 0 && highlighted < suggestions.length) {
+        const selected = suggestions[highlighted];
+        if (selected) {
+          router.push(`/reports/view/${selected.id}`);
+        }
+      }
+    } else if (e.key === 'Escape') {
+      setHighlighted(-1);
+    }
+  }
+
   if (loading) {
     return (
       <main className="max-w-6xl mx-auto px-6 py-10">
@@ -137,14 +207,48 @@ export default function ReportsPage() {
         {/* Search + Filters + Sort */}
         <div className="mt-4 flex flex-col gap-3">
           {/* Search bar (full width, main focus) */}
-          <div className="w-full">
+          <div className="w-full relative">
             <input
+              ref={inputRef}
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by project name..."
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setHighlighted(-1);
+              }}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Search by project name or department..."
               className="w-full border rounded-full px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2FA8A3]"
             />
+
+            {/* Suggestions dropdown */}
+            {suggestions.length > 0 && highlighted >= -1 && (
+              <div
+                ref={suggestionsRef}
+                className="absolute left-0 right-0 mt-2 bg-white border rounded-xl shadow-lg z-20 overflow-hidden"
+              >
+                {suggestions.map((s, idx) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onMouseEnter={() => setHighlighted(idx)}
+                    onMouseLeave={() => setHighlighted(-1)}
+                    onClick={() => {
+                      router.push(`/reports/view/${s.id}`);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${
+                      highlighted === idx ? 'bg-gray-100' : ''
+                    }`
+                    }
+                  >
+                    <div className="font-medium text-[#002C3E] line-clamp-1">
+                      {s.name || 'Untitled Report'}
+                    </div>
+                    <div className="text-xs text-gray-500">{s.department || '—'}</div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Filters row: department (shorter) + sort (compact) */}
