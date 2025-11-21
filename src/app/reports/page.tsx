@@ -127,9 +127,9 @@ export default function ReportsPage() {
     switch (statusLow)
     {
       case "open":
-        return <div className="status status-success"></div>;
+        return <div className="status status-success status-lg"></div>;
       case "closed":
-        return <div className="status status-error"></div>;
+        return <div className="status status-error status-lg"></div>;
       default:
         return null;
     }
