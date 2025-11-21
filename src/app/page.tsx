@@ -5,47 +5,44 @@ import React, { useEffect, useState } from 'react';
 
 export default function Homepage() {
   // --- Smooth Typing Effect ---
-const suggestions: string[] = [
-  'Search ETS Reports',
-  'Health',
-  'Human Services',
-  'Commerce and Consumer Affairs',
-];
+  const suggestions: string[] = [
+    'Search ETS Reports',
+    'Health',
+    'Human Services',
+    'Commerce and Consumer Affairs',
+  ];
 
-const [placeholder, setPlaceholder] = useState('');
-const [index, setIndex] = useState(0);
-const [subIndex, setSubIndex] = useState(0);
-const [deleting, setDeleting] = useState(false);
+  const [placeholder, setPlaceholder] = useState('');
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
 
-useEffect(() => {
-  const currentText = suggestions[index] ?? ""; 
+  useEffect(() => {
+    const currentText = suggestions[index] ?? "";
 
-  const speed = deleting ? 60 : 70;
+    const speed = deleting ? 60 : 80; // slowed slightly
 
-  const handler = setTimeout(() => {
-    if (!deleting) {
-      // typing forward
-      setPlaceholder(currentText.substring(0, subIndex + 1));
-      setSubIndex((prev) => prev + 1);
+    const handler = setTimeout(() => {
+      if (!deleting) {
+        setPlaceholder(currentText.substring(0, subIndex + 1));
+        setSubIndex((prev) => prev + 1);
 
-      if (subIndex === currentText.length) {
-        setTimeout(() => setDeleting(true), 1200);
+        if (subIndex === currentText.length) {
+          setTimeout(() => setDeleting(true), 1400);
+        }
+      } else {
+        setPlaceholder(currentText.substring(0, subIndex - 1));
+        setSubIndex((prev) => prev - 1);
+
+        if (subIndex === 0) {
+          setDeleting(false);
+          setIndex((prev) => (prev + 1) % suggestions.length);
+        }
       }
-    } else {
-      // deleting backward
-      setPlaceholder(currentText.substring(0, subIndex - 1));
-      setSubIndex((prev) => prev - 1);
+    }, speed);
 
-      if (subIndex === 0) {
-        setDeleting(false);
-        setIndex((prev) => (prev + 1) % suggestions.length);
-      }
-    }
-  }, speed);
-
-  return () => clearTimeout(handler);
-}, [subIndex, deleting, index, suggestions]);
-
+    return () => clearTimeout(handler);
+  }, [subIndex, deleting, index, suggestions]);
 
   return (
     <div
@@ -63,14 +60,15 @@ useEffect(() => {
           flex flex-col items-center text-center
         "
       >
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-5 sm:mb-6 leading-tight">
+        {/* TITLE — Mobile smaller ONLY */}
+        <h2 className="text-lg sm:text-3xl lg:text-4xl font-extrabold mb-5 sm:mb-6 leading-tight">
           Independent Verification and Validation Reports
         </h2>
 
-        {/* Original sub-header formatting */}
-        <p className="text-gray-700 mb-12 max-w-2xl mx-auto text-lg">
-          Enterprise Technology Services (ETS) leads statewide IT strategy, cybersecurity,
-          and digital services to better serve the people of Hawai‘i.
+        {/* DESCRIPTION — Mobile smaller ONLY */}
+        <p className="text-sm sm:text-lg text-gray-700 mb-12 max-w-2xl mx-auto">
+          Enterprise Technology Services (ETS) leads statewide IT strategy,
+          cybersecurity, and digital services to better serve the people of Hawai‘i.
         </p>
 
         {/* Search */}
@@ -128,7 +126,7 @@ useEffect(() => {
             View All Reports
           </a>
 
-          {/* Archived Reports + Tooltip */}
+          {/* Archived Reports */}
           <div className="relative group">
             <a
               href="https://ets.hawaii.gov/report/independent-verification-and-validation-reports/"
@@ -144,18 +142,18 @@ useEffect(() => {
               Archived Reports
             </a>
 
-            {/* Teal Tooltip */}
+            {/* DESKTOP ONLY TOOLTIP */}
             <div
               className="
+                hidden sm:block
                 absolute left-1/2 -translate-x-1/2 mt-2
                 px-3 py-1.5 rounded-md
                 bg-[#2FA8A3] text-white text-xs font-medium
                 border border-[#2FA8A3]
                 shadow-lg shadow-[#2FA8A3]/30
                 whitespace-nowrap min-w-max
-
                 opacity-0 scale-95 translate-y-1 pointer-events-none
-                group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:pointer-events-auto
+                group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0
                 transition-all duration-200
               "
             >
