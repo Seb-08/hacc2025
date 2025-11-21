@@ -2,14 +2,13 @@
 import { NextResponse } from 'next/server';
 import { db } from '~/server/db';
 import { reportSnapshots } from '~/server/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { CreateEngagespotClient } from '@engagespot/node';
 
 const engagespot = new CreateEngagespotClient({
   apiKey: process.env.ENGAGESPOT_API_KEY!,
   apiSecret: process.env.ENGAGESPOT_API_SECRET!,
 });
-
 
 export async function POST(
   req: Request,
@@ -32,8 +31,12 @@ export async function POST(
       !signature ||
       !signature.name ||
       !signature.method ||
-      (signature.method === 'upload' && !signature.imageUrl) &&
-      (signature.method === 'draw' && !signature.imageDataUrl)
+      (
+        signature.method === 'upload' && !signature.imageUrl
+      ) ||
+      (
+        signature.method === 'draw' && !signature.imageDataUrl
+      )
     ) {
       return NextResponse.json(
         { error: 'Missing signer name or signature image.' },
@@ -51,23 +54,25 @@ export async function POST(
       );
     }
 
-    // Ensure snapshot exists & is pending
+    // Ensure snapshot exists
     const existing = await db
       .select()
       .from(reportSnapshots)
       .where(eq(reportSnapshots.id, snapshotId))
       .limit(1);
 
-    if (!existing[0]) {
+    const snap = existing[0];
+    if (!snap) {
       return NextResponse.json(
         { error: 'Snapshot not found' },
         { status: 404 },
       );
     }
 
-    if (existing[0].status !== 'pending') {
+    // Only block if it's already approved
+    if (snap.status === 'approved') {
       return NextResponse.json(
-        { error: 'Only pending snapshots can be approved' },
+        { error: 'Snapshot is already approved' },
         { status: 400 },
       );
     }
@@ -78,33 +83,27 @@ export async function POST(
       .set({
         status: 'approved',
         approvedAt: new Date(),
-        // add these columns in schema if not present yet:
         // signerName: signature.name,
         // signerMethod: signature.method,
         // signatureUrl: imageUrl,
       } as any)
-      .where(
-        and(
-          eq(reportSnapshots.id, snapshotId),
-          eq(reportSnapshots.status, 'pending'),
-        ),
-      );
+      .where(eq(reportSnapshots.id, snapshotId));
 
-      try {
-        const res = await engagespot.send({
-          notification: {
-            title: "Report Approved ✅",
-            message: "Your report has been approved by ETS.",
-            url: ``,
-          },
-          sendTo: {
-            recipients: ["vendor@example.com"], 
-          },
-        });
-        console.log("✅ Engagespot notification sent to demo vendor:", res);
-      } catch (err) {
-        console.error("❌ Engagespot send failed for demo vendor", err);
-      } 
+    try {
+      const res = await engagespot.send({
+        notification: {
+          title: "Report Approved ✅",
+          message: "Your report has been approved by ETS.",
+          url: ``,
+        },
+        sendTo: {
+          recipients: ["vendor@example.com"],
+        },
+      });
+      console.log("✅ Engagespot notification sent to demo vendor:", res);
+    } catch (err) {
+      console.error("❌ Engagespot send failed for demo vendor", err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
