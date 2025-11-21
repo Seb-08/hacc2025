@@ -7,6 +7,7 @@ type Report = {
   id: number;
   name: string;
   department: string;
+  status: string;
   startDate: string | null;
   updatedAt?: string | null;
 };
@@ -25,6 +26,7 @@ export default function ReportsPage() {
   const [selectedDept, setSelectedDept] = useState<string>('all');
   const [sort, setSort] = useState<SortOption>('newest'); // default: newest → oldest
   const [highlighted, setHighlighted] = useState<number>(-1);
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'open' | 'closed'>('all');
 
   // Load reports from API
   useEffect(() => {
@@ -82,7 +84,12 @@ export default function ReportsPage() {
           ? true
           : (r.department || '').toLowerCase() === selectedDept.toLowerCase();
 
-      return matchesSearch && matchesDept;
+      const matchesStatus =
+        selectedStatus === 'all'
+          ? true
+          : (r.status || '').toLowerCase() === selectedStatus;
+
+      return matchesSearch && matchesDept && matchesStatus;
     });
 
     // Sorting logic
@@ -115,7 +122,7 @@ export default function ReportsPage() {
     });
 
     return result;
-  }, [reports, search, selectedDept, sort]);
+  }, [reports, search, selectedDept, sort, selectedStatus]);
 
   // Suggestions (for autosuggest dropdown) — show matches by name or department
   const suggestions = useMemo(() => {
@@ -274,6 +281,19 @@ export default function ReportsPage() {
               </select>
             </div>
 
+            {/* Status Filter */}
+            <div className="w-32">
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value as 'all' | 'open' | 'closed')}
+                className="w-full border rounded-full px-3 py-2 text-xs bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2FA8A3]"
+              >
+                <option value="all">All Statuses</option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+
             {/* Sort control */}
             <div className="w-44">
               <select
@@ -321,6 +341,9 @@ export default function ReportsPage() {
                 </h2>
                 <p className="text-xs text-gray-500 mt-1">
                   Dept: {report.department || '—'}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Status: {report.status ? report.status : '—'}
                 </p>
                 <p className="text-xs text-gray-500">
                   Start:{' '}

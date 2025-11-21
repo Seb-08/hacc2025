@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "~/server/db";
-import { reports, reportSnapshots } from "~/server/db/schema";
+import { reports, reportSnapshots, issues } from "~/server/db/schema";
 import { eq, and, exists } from "drizzle-orm";
 
 /**
@@ -29,7 +29,22 @@ export async function GET() {
       )
       .orderBy(reports.createdAt);
 
-    return NextResponse.json(allReports);
+    // Compute a simple `status` per report: 'open' if any issue exists with status 'open', otherwise 'closed'.
+    const reportsWithStatus = await Promise.all(
+      allReports.map(async (r) => {
+        const openIssues = await db
+          .select()
+          .from(issues)
+          .where(and(eq(issues.reportId, r.id), eq(issues.status, 'open')));
+
+        return {
+          ...r,
+          status: openIssues.length ? 'open' : 'closed',
+        };
+      })
+    );
+
+    return NextResponse.json(reportsWithStatus);
   } catch (err) {
     console.error("GET /api/reports error:", err);
     return NextResponse.json(
