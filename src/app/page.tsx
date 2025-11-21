@@ -1,33 +1,62 @@
-import Link from "next/link";
+// Hawai‘i ETS Homepage
+'use client';
 
-export default function HomePage() {
-  const pages = [
-    { name: "calina", path: "/CalinaKaila/Calina" },
-    { name: "kaila", path: "/CalinaKaila/Kaila" },
-    { name: "search", path: "/Sebastian/searching" },
-    { name: "upload", path: "/Sebastian/uploading" },
-    { name: "tony", path: "/TonyDanica/tony" },
-    { name: "danica", path: "/TonyDanica/danica" },
-    { name: "lokahi", path: "/TonyDanica/lokahi" },
-    { name: "henery", path: "/JathanHenery/henery" },
-    { name: "jathan", path: "/JathanHenery/jathan" },
-  ];
+import React from 'react';
 
+export default function Homepage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-6 px-4 py-16">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {pages.map((page) => (
-            <Link
-              key={page.name}
-              href={page.path}
-              className="flex items-center justify-center rounded-xl bg-white/10 p-4 text-xl font-bold text-white hover:bg-white/20"
-            >
-              {page.name}
-            </Link>
-          ))}
+    <main className="bg-[#F4FAFA] text-[#002C3E] min-h-screen">
+      <section className="flex flex-col items-center text-center min-h-[90vh] px-6 bg-gradient-to-b from-[#F4FAFA] to-[#E7F7F6] pt-24">
+        <h2 className="text-5xl font-extrabold mb-6">
+          Independent Verification and Validation Reports
+        </h2>
+
+        <p className="text-gray-700 mb-12 max-w-2xl mx-auto text-lg">
+          Enterprise Technology Services (ETS) leads statewide IT strategy, cybersecurity,
+          and digital services to better serve the people of Hawai‘i.
+        </p>
+
+        {/* Search → routes to /reports?q=... */}
+        <form
+          action="/reports"
+          method="GET"
+          className="flex justify-center items-center mb-12"
+        >
+          <input
+            type="text"
+            name="q"
+            placeholder="Search ETS Reports"
+            className="w-[750px] rounded-l-full border border-gray-300 text-gray-700 text-lg px-6 py-3.5
+                       focus:outline-none focus:ring-2 focus:ring-[#2FA8A3] shadow-sm"
+          />
+          <button
+            type="submit"
+            className="bg-[#2FA8A3] hover:bg-[#24938f] text-white font-medium rounded-r-full px-8 py-[13px]
+                       text-lg transition-colors border border-[#2FA8A3] -ml-[1px]"
+          >
+            Search
+          </button>
+        </form>
+
+        <div className="flex justify-center gap-5">
+          <a
+            href="/reports"
+            className="bg-[#2FA8A3] text-white hover:bg-[#24938f] text-base rounded-full px-8 py-3 transition-colors"
+          >
+            View All Reports
+          </a>
+          <a
+            href="https://ets.hawaii.gov/report/independent-verification-and-validation-reports/"
+            className="border border-[#2FA8A3] text-[#002C3E] hover:bg-[#E7F7F6] text-base rounded-full px-8 py-3 transition-colors"
+          >
+            Archived Reports
+          </a>
         </div>
-      </div>
+      </section>
+
+      <div className="h-[6px] w-full bg-gradient-to-r from-[#00796B] to-[#2FA8A3]" />
+
+      
     </main>
   );
 }

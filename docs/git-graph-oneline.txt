@@ -1,0 +1,118 @@
+* 46bf86c (origin/navbar) Update layout.tsx
+* d7711a1 Update layout.tsx
+* c939ee4 Update page.tsx
+* dd0aac6 Update page.tsx
+* 9b0bca4 Update layout.tsx
+* c586abf Update page.tsx
+* a6e6d9c admin views for navbar 11/4
+* b5050e3 nav routing
+| * 50c370c (HEAD -> main, origin/main, origin/charts, origin/HEAD, charts) exporting
+| * 670a67b noti
+| * 05cf40a (notifacations) yessah
+| | * 66babc5 (origin/notifications) adding exporting since it works on my end
+| | * c7ca34f (notifications) notifications are functional
+| | * d669ebb ui of notifications
+| |/  
+|/|   
+| | * efa620c (origin/feature/searchresults) Things I currently had
+| | * 8973dc8 Added data from database
+| | * 88c08c7 Added API to search results
+| | * 30be02e 11/3 added imports for querying
+| |/| 
+|/| | 
+| | * 8e26994 Refined again
+| | * 80b59a2 refined ui
+* | | 557b0df (origin/prototype) Update page.tsx
+| |/  
+|/|   
+| | * a459d0b (origin/month) Create LICENSE.txt
+| |/  
+| * 6575339 all done
+| * a22ea23 login
+| * bcf1a79 reveiw n stuff
+| * 8b71c70 polished 11/6, 8:35pm
+| | * 5ec3ad2 (origin/login) added firebase
+| |/  
+| * f33869c autofill
+| * dc4c0a1 form
+| * 8199921 charts showcase
+|/  
+| * eec5fed (origin/Form) Jathan Form first commit
+|/  
+| * 3e2ea52 (origin/database) progress of schema and api updates, and started backend on hierarchy
+|/  
+| * 0c8c3a5 (origin/test) test2
+|/  
+*   cd30890 Merge pull request #17 from Seb-08/ui
+|\  
+| * 3fc1da1 good
+* | 56de6f4 Merge pull request #16 from Seb-08/ui
+|\| 
+| * 1b52cc5 login ui
+* | 4b506ed Merge pull request #15 from Seb-08/ui
+|\| 
+| * a6f0538 Updated layout 10/30
+| * 95dabe6 searchresults -FailedToast
+| * b8617d5 Updated page format 10/30
+| * 0f78ee0 Updated layout logo added
+| * c13b57c Updated layout logo added
+| * 6c78b5a api stuff for new schema
+| *   537e05d trying to solve issue
+| |\  
+| | * d8b0315 Add profile page
+| | * 7a1fb04 Update layout.tsx
+| * | 2cff087 adding db files
+| |/  
+| * ee0083f testing if pull requests work
+| * 101c1c9 Create page.tsx
+| * 9ee017e Create page.tsx
+| * 00ac48c Delete src/app/vendorediting
+| * d0dbec3 Create page.tsx
+| * 0192d00 Delete src/app/form
+| * c96ad37 Create form
+| * 8b5b1a5 Create vendorediting
+| * ac5d8d2 Create page.tsx
+| * 32f7515 Create page.tsx
+| * c899ff3 Create page.tsx
+| * 416452a Delete src/app/TonyDanica directory
+| * c11d5ba Delete src/app/JathanHenery directory
+| * 02406ab Delete src/app/CalinaKaila directory
+|/  
+* 73d4850 Upload Thing, Search Bar, and filters
+* db09adf database
+*   2115ac7 mergeing with prototype
+|\  
+| * 2519976 changed my page.tsx
+| | *   c3127b4 (tag: mainprotect) Merge pull request #11 from Seb-08/loka
+| | |\  
+| | | * a4ea498 Push to loka branch w/ own page
+| |_|/  
+|/| |   
+| | * 43afab2 diasy ui
+| | *   dafa1c4 Merge pull request #10 from Seb-08/prototype
+| | |\  
+| |_|/  
+|/| |   
+* | | 40062ab Merge branch 'prototype' of https://github.com/Seb-08/hacc2025 into prototype
+|\| | 
+* | | b6a93b2 test
+| | * dbf1206 Merge pull request #9 from Seb-08/sebastian
+| |/| 
+| | * 489665e lesson 9/23
+| |/  
+| * 9efa75f main 9/22
+| * 1f52bff 9/22 perosnal folders
+| *   c11a7a4 Merge branch 'main' of https://github.com/Seb-08/hacc2025
+| |\  
+| | * 13f529a added hola brochacho to henry.ts
+| | * dcbefef Merge pull request #1 from Da-Iba/main
+| |/| 
+|/| | 
+| | * fe1eccd Create .env
+| |/  
+|/|   
+* | a9413c7 test push SEBASTIAN
+| * 728ec91 testing
+|/  
+* 160b72b test push - sebastian
+* b3d1a85 initial commit

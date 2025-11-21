@@ -1,0 +1,248 @@
+# HACC 2025 – Git Evidence Report  
+Hawaiʻi Enterprise Technology Services IV&V Reporting System  
+Repository: `github.com/Seb-08/hacc2025`
+
+---
+
+## 1. Project Overview
+
+**Project name:** Hawaiʻi ETS IV&V Reporting System  
+**Repository:** `github.com/Seb-08/hacc2025`  
+**Tech stack:** Next.js, TypeScript, Tailwind, PostgreSQL (Drizzle), API routes, UploadThing, etc.  
+**Development period (based on Git history):**  
+From **2025-09-09** (initial commit) through **2025-11-16** (latest commits).
+
+This repository contains the full development history of our project for HACC 2025.  
+The Git logs show:
+
+- Continuous work over roughly two months  
+- Multiple contributors committing under individual accounts  
+- Use of feature branches, pull requests, and merges  
+- Incremental evolution of features rather than a single mass code dump
+
+Together, this demonstrates that our codebase was developed by our team and not copied from another source.
+
+---
+
+## 2. Branch & Workflow Overview
+
+### 2.1 Branch Structure
+
+Key branches present in the repository:
+
+- `main` – Primary production branch (`origin/main`)
+- `charts` – Charts and visualization work (aligned with `main` in final state)
+- `notifications` / `notifacations` – Notification system feature branches
+- `prototype` – Early prototype branch, merged back into the main line
+- `Form` – Initial form workflow implementation
+- `database` – Schema/API updates and hierarchy backend work
+- `feature/searchresults` – Search results view and related APIs
+- `login` – Authentication and login feature branch
+- `month` – Branch associated with licensing / project meta
+- Additional branches such as `navbar`, `test`, etc. for UI and experimentation
+
+This branching strategy shows that the team:
+
+- Developed features on separate branches  
+- Integrated changes via merges and pull requests  
+- Avoided dumping all work directly onto `main` in a single step
+
+(Full raw branch output is included in the Appendix.)
+
+---
+
+## 3. Contributor Summary
+
+From the Git shortlog, the following contributors appear in the project history:
+
+| Commits | Author                                      |
+|--------:|---------------------------------------------|
+| 13      | HenryC213 \<henrychristley@gmail.com>       |
+| 12      | Kaila Wallace \<kailawallace00@gmail.com>   |
+| 12      | Seb-08 \<sebastiantsutsui@gmail.com>        |
+|  9      | Calina Ryan \<2601400323@k12.hi.us>         |
+|  7      | CalinaRyan \<calina.ryan08@gmail.com>       |
+|  7      | FailedToast \<pixelwinter07@gmail.com>      |
+|  5      | unknown \<Seb-08>                           |
+|  4      | Da-Iba \<143767665+Da-Iba@users.noreply.github.com> |
+|  4      | Seb-08 \<165990184+Seb-08@users.noreply.github.com> |
+|  3      | Henry \<henrychristley@gmail.com>           |
+|  2      | Da-Iba \<dibanez11173@gmail.com>            |
+|  1      | FailedToast \<BeenForsaken@proton.me>       |
+|  1      | Jathan \<tfdevil1918@gmail.com>             |
+|  1      | Luvelykai \<kailawallace00@gmail.com>       |
+|  1      | Tony \<tonytsou612@gmail.com>               |
+|  1      | luvelykai \<kailawallace00@gmail.com>       |
+|  1      | tfdevil1918 \<tfdevil1918@gmail.com>        |
+
+This clearly shows:
+
+- **Many distinct contributors** working in the same repository  
+- Multiple commits per contributor over time  
+- Normal Git identity variations (e.g., `Seb-08` vs `unknown <Seb-08>`), indicating real configuration and usage rather than a single artificial identity
+
+---
+
+## 4. Development Timeline (High-Level Narrative)
+
+Below is a narrative summary of major development phases, based on the commit messages and dates in the Git log.
+
+### 4.1 Initial Setup (Early September 2025)
+
+- **Initial commit** (`b3d1a85`, 2025-09-09) by `unknown <Seb-08>`:
+  - Sets up the Next.js project, Drizzle configuration, database schema scaffolding, global styles, and initial app layout.
+- Followed by **test pushes** (e.g., `160b72b`, `a9413c7`) verifying the workflow.
+- A `.env` file is added and merged via pull request (`fe1eccd`, `dcbefef`), which shows early coordination using PRs.
+
+### 4.2 Personal Folders & Early UI (Mid/Late September 2025)
+
+- Creation of personal folders and pages for each team member (e.g., `1f52bff` – “9/22 personal folders”).
+- Introduction of UI theming and DaisyUI configuration (`9efa75f` – “main 9/22”).
+- Multiple branches and pull requests related to early prototypes:
+  - `prototype` and other branches are merged (`dafa1c4`, `40062ab`, `2115ac7`).
+  - Personal feature branches (e.g., `sebastian`, `loka`) merged via PRs.
+
+This phase shows the team experimenting, setting up UI and structure, and regularly merging via GitHub pull requests.
+
+### 4.3 Database & API Build-Out (Late September – Early October 2025)
+
+- Commit `db09adf` (“database”) introduces:
+  - Database integrations in `src/server/db/index.ts`
+  - Expanded environment configuration
+- Commit `6c78b5a` (“api stuff for new schema”) adds:
+  - API routes for `createMonthlyReport`, `departments`, `issues`, `projects`, `schedules`
+- Commit `73d4850` (“Upload Thing, Search Bar, and filters”) adds:
+  - UploadThing integration
+  - Search functionality and filtering
+  - Additional DB schema and server logic
+
+At this point, the project transitions from a static UI prototype into a real full-stack app with a data model and endpoints.
+
+### 4.4 UI, Search, and Layout Polishing (Late October 2025)
+
+- Multiple layout and page updates by **Kaila Wallace**:
+  - `b8617d5` – Updated page format (homepage)
+  - `a6f0538` – Updated layout (10/30)
+  - `0f78ee0` / `c13b57c` – Layout and logo improvements
+- Search results are developed by **FailedToast**:
+  - `95dabe6` – “searchresults -FailedToast”, initial search results page
+- Various UI work merged via pull requests:
+  - `4b506ed` – Merge PR #15 (“UI”)
+  - `56de6f4` – Merge PR #16 (“login ui”)
+  - `cd30890` – Merge PR #17 (“good”)
+
+This period is heavily focused on front-end polish, routing, and making the app look and feel like a cohesive product.
+
+### 4.5 Form System, Reports, and Drizzle Migrations (Early November 2025)
+
+- **Forms and reports** (Sebastian and team):
+  - `8199921` – “charts showcase”: adds chart display page, chart setup library, and form-related code.
+  - `dc4c0a1` – “form”: large refactor that:
+    - Creates `src/app/form/general/*` pages
+    - Adds comprehensive `/reports` API routes (appendix, financials, issues, scope/schedule, submit)
+    - Introduces `report-draft-provider`, report side nav, and Fetch helpers
+    - Adds Drizzle metadata and new migrations
+- **Database and hierarchy backend** (Calina):
+  - `3e2ea52` – “progress of schema and api updates, and started backend on hierarchy”:
+    - Updates several API routes (`createMonthlyReport`, `issues`, `projects`, `schedules`)
+    - Adds and refines `hierarchy.ts` and schema
+- **Authentication and login**:
+  - `a22ea23` – “login”:
+    - Implements login/logout routes and `auth/me`
+    - Adds `AuthButtonClient` and `lib/auth.ts`
+    - Integrates login page into app flow
+    - Refactors form layout and review pages
+  - `5ec3ad2` (branch `login`) – adds Firebase-related setup
+
+This period is where the app’s core business logic—forms, reports, authentication, and database—really comes together.
+
+### 4.6 Review Workflow, Snapshots, and Notifications (Mid November 2025)
+
+- **Review flow & snapshot system**:
+  - `8b71c70` – “polished 11/6, 8:35pm”: refines `/reports` APIs, form pages, and review-related components.
+  - `bcf1a79` – “review n stuff”:
+    - Adds Drizzle migrations and metadata
+    - Introduces snapshot review APIs (`/review/snapshots`)
+    - Implements `review/page.tsx` for the reviewer view
+  - `6575339` – “all done”:
+    - Integrates `SignatureModal`
+    - Enhances snapshot approval routes
+    - Improves `reports/view/[id]/page.tsx` and other UI around report review
+- **Notifications system**:
+  - `d669ebb` – “ui of notifications”: introduces notification UI and `notificationbell` client component.
+  - `c7ca34f` – “notifications are functional” (very large commit):
+    - Adds or refines:
+      - Auth routes (`/api/auth/login`, `/logout`, `/me`)
+      - A wide range of `/reports` and `/review` API routes
+      - Form pages, review pages, report pages
+      - `SignatureModal`, `report-draft-provider`, `report-side-nav`
+      - `chartSetup`, `notify.ts`, and various helpers
+      - Updates to schema and migrations
+  - `66babc5` – “adding exporting since it works on my end”
+  - `670a67b` – “noti”: notification-related updates by Sebastian
+  - Branch `notifacations` (`05cf40a`) with experiments related to hierarchy
+
+This shows the project expanding into a full-fledged workflow: creating, signing, snapshotting, reviewing, and notifying around monthly IV&V reports.
+
+### 4.7 Final UI and Navbar Passes (Mid November 2025)
+
+- A series of layout and page tweaks by **Kaila**:
+  - `b5050e3` – “nav routing”
+  - `a6e6d9c` – “admin views for navbar 11/4”
+  - `c586abf`, `9b0bca4`, `dd0aac6`, `c939ee4`, `d7711a1`, `46bf86c` – ongoing refinements to `src/app/layout.tsx` and `src/app/page.tsx`
+- Final exporting commit by **Calina**:
+  - `50c370c` – “exporting”: updates `package.json`, `pnpm-lock.yaml`, and `reports/view/[id]/page.tsx` to finalize exporting behavior.
+
+By the end of this timeline, the repository shows a natural evolution from first commit to a polished, feature-complete application.
+
+---
+
+## 5. Merge & Pull Request Evidence
+
+The log includes numerous merge commits that correspond to GitHub pull requests and branch integrations, demonstrating collaborative development:
+
+- `cd30890` – **Merge pull request #17** from `Seb-08/ui` (“good”)
+- `56de6f4` – **Merge pull request #16** from `Seb-08/ui` (“login ui”)
+- `4b506ed` – **Merge pull request #15** from `Seb-08/ui` (“UI”)
+- `537e05d` – “trying to solve issue” (merge-related)
+- `2115ac7` – “mergeing with prototype”
+- `40062ab` – “Merge branch 'prototype' of https://github.com/Seb-08/hacc2025 into prototype”
+- `c11a7a4` – “Merge branch 'main' of https://github.com/Seb-08/hacc2025”
+- `dcbefef` – **Merge pull request #1** from `Da-Iba/main`
+
+These merge commits are part of the continuous, documented development process and further support that the code was iteratively built, not copied wholesale.
+
+---
+
+## 6. Conclusion
+
+Based on the Git history:
+
+1. **Timeline:** Development occurs steadily from early September through mid-November 2025, with commits spread across that period.
+2. **Collaboration:** Many distinct authors contribute code, with multiple commits per person.
+3. **Workflow:** Work is organized into branches (notifications, search results, login, database, forms, prototype, etc.) and integrated via merges and pull requests.
+4. **Incremental evolution:** Key files and features (layout, forms, reports, snapshots, notifications, auth, database schema) evolve step-by-step, with clear insertions and deletions over time.
+5. **Transparency:** All commits, authors, branches, and merge points are visible and auditable in the public Git history.
+
+Taken together, this repository provides strong, verifiable evidence that the project was developed organically by our team and not stolen.
+
+---
+
+## Appendix – Raw Git Outputs
+
+```text
+  charts                               50c370c [origin/charts] exporting
+* main                                 50c370c [origin/main] exporting
+  notifacations                        05cf40a yessah
+  notifications                        c7ca34f [origin/notifications: behind 1] notifications are functional
+  remotes/origin/Form                  eec5fed Jathan Form first commit
+  remotes/origin/HEAD                  -> origin/main
+  remotes/origin/charts                50c370c exporting
+  remotes/origin/database              3e2ea52 progress of schema and api updates, and started backend on hierarchy
+  remotes/origin/feature/searchresults efa620c Things I currently had
+  remotes/origin/login                 5ec3ad2 added firebase
+  remotes/origin/main                  50c370c exporting
+  remotes/origin/month                 a459d0b Create LICENSE.txt
+  remotes/origin/navbar                46bf86c Update layout.tsx
+  remotes/origin/notifications         66babc5 adding exporting since it works on my end
+  remotes/origin/prototype             557b0
