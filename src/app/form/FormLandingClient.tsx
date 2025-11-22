@@ -140,7 +140,7 @@ const [openId, setOpenId] = useState<number | null>(null);
               
               <div className="dropdown relative">
                 <button
-                  className="dropbtn text-x bg-base-100 rounded-box w-8 p-2 hover:bg-[#A9A9A9]"
+                  className="dropbtn text-x  rounded-box w-8 p-2 hover:bg-[#A9A9A9]"
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenId(openId === r.id ? null : r.id);
@@ -152,12 +152,12 @@ const [openId, setOpenId] = useState<number | null>(null);
                   />
                 </button>
                 <div
-                  className={`dropdown-content menu bg-base-100 rounded-xl shadow-lg p-2 w-40 mt-2 absolute right-0 z-50 ${
+                  className={`dropdown-content menu bg-base-100 bg-white rounded-xl shadow-lg p-2 w-40 mt-2 absolute right-0 z-50  ${
                     openId === r.id ? "block" : "hidden"
                   }`}
                 >
                   <ul>
-                    <li>
+                    <li className='hover:bg-gray-200'>
                       <a
                         href={`/form/general?id=${r.id}`}
                         onClick={(e) => {
