@@ -29,13 +29,11 @@ type ReviewSnapshot = {
   createdAt: string;
   status: SnapshotStatus;
 
-  // Signature metadata from schema (if your API returns these)
   signatureName?: string | null;
   signatureMethod?: string | null;
   signatureUrl?: string | null;
   approvedAt?: string | null;
 
-  // Extra fields from /api/review/snapshots
   reportName: string;
   department: string;
   reportStartDate: string | null;
@@ -126,7 +124,6 @@ export default function SnapshotDetailClient({
       : 'Snapshot',
   });
 
-  // Load all snapshots and focus on the one with this ID
   useEffect(() => {
     if (!Number.isFinite(numericId)) {
       setError('Invalid snapshot ID');
@@ -155,7 +152,6 @@ export default function SnapshotDetailClient({
           return;
         }
 
-        // Filter to only snapshots for the same report
         const sameReport = all.filter(
           (s) => s.reportId === current.reportId,
         );
@@ -232,7 +228,6 @@ export default function SnapshotDetailClient({
 
       setActionMessage('✅ Snapshot approved with signature attached');
 
-      // Update local state
       setSnapshots((prev) =>
         prev.map((s) =>
           s.id === approvingId ? { ...s, status: 'approved' } : s,
@@ -246,6 +241,7 @@ export default function SnapshotDetailClient({
     }
   }
 
+  // 🔴 Change snapshot to DENIED (no deletion)
   async function handleDeny() {
     if (!activeSnapshot) return;
     setActionMessage('');
@@ -260,7 +256,7 @@ export default function SnapshotDetailClient({
       if (!res.ok) {
         throw new Error(data.error || 'Failed to deny snapshot');
       }
-      setActionMessage('❌ Snapshot denied');
+      setActionMessage('❌ Snapshot marked as denied');
       setSnapshots((prev) =>
         prev.map((s) =>
           s.id === activeSnapshot.id ? { ...s, status: 'denied' } : s,
@@ -269,28 +265,6 @@ export default function SnapshotDetailClient({
     } catch (err: any) {
       console.error(err);
       setActionMessage(err?.message ?? 'Error denying snapshot');
-    }
-  }
-
-  async function handleRemove() {
-    if (!activeSnapshot) return;
-    setActionMessage('');
-    try {
-      const res = await fetch(
-        `/api/review/snapshots/${activeSnapshot.id}`,
-        {
-          method: 'DELETE',
-        },
-      );
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to remove snapshot');
-      }
-      setActionMessage('🗑️ Snapshot removed');
-      router.push('/review');
-    } catch (err: any) {
-      console.error(err);
-      setActionMessage(err?.message ?? 'Error removing snapshot');
     }
   }
 
@@ -331,13 +305,11 @@ export default function SnapshotDetailClient({
   } = selectedSnapshot;
 
   const financialData = financials[0];
-
-  // Snapshot meta
   const snapshotTakenDate = activeSnapshot.createdAt || submittedAt || '';
+  const statusConfig = getStatusConfig(activeSnapshot.status);
 
   // ========= CHART DATA HELPERS =========
 
-  // 💰 Financial bar chart (support both old + new field names)
   const chartData: ChartData<'bar'> | null = financialData
     ? {
         labels: ['Original Contract', 'Paid to Date'],
@@ -382,7 +354,6 @@ export default function SnapshotDetailClient({
     },
   };
 
-  // 📅 1. Schedule timeline – horizontal bar (x = days until target date)
   const scheduleTimelineData: ChartData<'bar'> | null = (() => {
     if (!scheduleScope?.length) return null;
 
@@ -450,7 +421,6 @@ export default function SnapshotDetailClient({
     },
   };
 
-  // 📊 2. Scope completion – horizontal bar (% complete)
   const scopeCompletionData: ChartData<'bar'> | null = (() => {
     if (!scheduleScope?.length) return null;
 
@@ -503,7 +473,6 @@ export default function SnapshotDetailClient({
     },
   };
 
-  // 🥧 3. Issues status – pie (Open vs Closed)
   const issuesStatusPieData: ChartData<'pie'> | null = (() => {
     if (!issues?.length) return null;
 
@@ -540,7 +509,6 @@ export default function SnapshotDetailClient({
     },
   };
 
-  // 🥧 4. Milestone completion – pie (100% vs <100%)
   const milestonesCompletionPieData: ChartData<'pie'> | null = (() => {
     if (!scheduleScope?.length) return null;
 
@@ -580,8 +548,6 @@ export default function SnapshotDetailClient({
     },
   };
 
-  const statusConfig = getStatusConfig(activeSnapshot.status);
-
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       {/* Top bar: back + PDF export */}
@@ -607,8 +573,8 @@ export default function SnapshotDetailClient({
         </p>
       )}
 
-      {/* Main content wrapper (this is what prints) */}
-      <div className="space-y-10 rounded-2xl bg-transparent p-0" ref={componentRef}>
+      {/* Main content (for printing) */}
+      <div className="space-y-10" ref={componentRef}>
         {/* Header & Signature & Controls */}
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="flex-1">
@@ -626,7 +592,6 @@ export default function SnapshotDetailClient({
                 : formatDate(activeSnapshot.reportStartDate)}
             </p>
 
-            {/* Snapshot selector (all snapshots for same report) */}
             {snapshots.length > 1 && (
               <div className="mt-4">
                 <label className="mb-1 block text-xs text-gray-600">
@@ -690,15 +655,15 @@ export default function SnapshotDetailClient({
 
               {activeSnapshot.status === 'approved' && (
                 <button
-                  onClick={handleRemove}
+                  onClick={handleDeny}
                   className="flex items-center gap-1 rounded-full bg-red-500 px-3 py-1.5 text-xs text-white hover:bg-red-600"
                 >
-                  Remove Snapshot
+                  Mark as Denied
                 </button>
               )}
             </div>
 
-            {/* Signature / Approval badge (if already signed) */}
+            {/* Signature badge */}
             {activeSnapshot.signatureUrl && activeSnapshot.signatureName && (
               <div className="mt-1 flex w-[260px] flex-col items-end gap-1 rounded-xl border border-emerald-200 bg-white px-3 py-2 shadow-sm">
                 <div className="flex items-center gap-1 text-[10px] font-semibold uppercase text-emerald-700">
@@ -734,9 +699,8 @@ export default function SnapshotDetailClient({
           </div>
         </div>
 
-        {/* 🔹 Top Summary Row */}
+        {/* Summary Row */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* General Info */}
           <div className="flex flex-col items-start rounded-xl border bg-white p-6 shadow-sm">
             <Flag className="mb-3 text-teal-600" />
             <h2 className="mb-1 text-lg font-semibold">
@@ -756,7 +720,6 @@ export default function SnapshotDetailClient({
             </p>
           </div>
 
-          {/* Financial Summary (wide) */}
           <div className="flex flex-col rounded-xl border bg-white p-6 shadow-sm lg:col-span-2">
             <div className="mb-3 flex items-center gap-2">
               <DollarSign className="text-green-600" />
@@ -807,7 +770,6 @@ export default function SnapshotDetailClient({
           </div>
         </div>
 
-        {/* 🔹 Top Pie Charts Row (side by side) */}
         {(issuesStatusPieData || milestonesCompletionPieData) && (
           <div className="grid gap-6 md:grid-cols-2">
             {issuesStatusPieData && (
@@ -846,7 +808,6 @@ export default function SnapshotDetailClient({
           </div>
         )}
 
-        {/* 🔹 Issues */}
         <div className="rounded-xl border bg-white p-6 shadow-sm">
           <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
             <ClipboardList className="text-indigo-600" /> All Issues
@@ -880,7 +841,6 @@ export default function SnapshotDetailClient({
           )}
         </div>
 
-        {/* 🔹 Schedule & Scope */}
         <div className="rounded-xl border bg-white p-6 shadow-sm">
           <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
             <Calendar className="text-amber-600" /> Schedule &amp; Scope
@@ -919,7 +879,6 @@ export default function SnapshotDetailClient({
                 </table>
               </div>
 
-              {/* Charts row */}
               <div className="grid gap-6 lg:grid-cols-2">
                 {scheduleTimelineData && (
                   <div className="rounded-xl border bg-gray-50 p-4">
@@ -959,7 +918,6 @@ export default function SnapshotDetailClient({
           )}
         </div>
 
-        {/* 🔹 Appendix */}
         <div className="rounded-xl border bg-white p-6 shadow-sm">
           <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
             <FileText className="text-purple-600" /> Appendix
@@ -974,7 +932,6 @@ export default function SnapshotDetailClient({
         </div>
       </div>
 
-      {/* Signature Modal */}
       <SignatureModal
         isOpen={showSignatureModal}
         onClose={() => {
