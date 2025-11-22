@@ -59,32 +59,11 @@ export default function FormLandingClient() {
     return ['All', ...Array.from(set)];
   }, [reports]);
 
- async function closeReport(id: number) {
-  try {
-    const res = await fetch(`/api/reports/${id}/status`, { method: "PATCH" });
-    if (!res.ok) throw new Error("Failed to close report");
-
-    // refetch the single report from the server
-    const updatedReport = await fetch(`/api/reports/${id}`, { cache: 'no-store' });
-    const reportData = await updatedReport.json();
-
-    // update UI with server's state
-    setReports((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, ...reportData } : r
-      )
-    );
-  } catch (err) {
-    console.error(err);
-  }
-}
-const [openId, setOpenId] = useState<number | null>(null);
-
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-2">Project Reports</h1>
       <p className="text-gray-600 mb-8">
-        Create new project or open existing projects for editing and submitting monthly reports.
+        Create new reports or open existing ones for editing and submission.
       </p>
 
       {/* 🔍 Search + Filter */}
@@ -121,7 +100,7 @@ const [openId, setOpenId] = useState<number | null>(null);
         >
           <span className="text-5xl text-teal-600 font-bold mb-2">＋</span>
           <span className="text-lg font-semibold text-teal-700">
-            Create New Project
+            Create New Report
           </span>
           <p className="text-gray-500 text-sm mt-1">Start from scratch</p>
         </button>
@@ -137,57 +116,9 @@ const [openId, setOpenId] = useState<number | null>(null);
               <h2 className="font-semibold text-gray-800 text-xl truncate">
                 {r.name || `Untitled Report #${r.id}`}
               </h2>
-              
-              <div className="dropdown relative">
-                <button
-                  className="dropbtn text-x bg-base-100 rounded-box w-8 p-2 hover:bg-[#A9A9A9]"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenId(openId === r.id ? null : r.id);
-                  }}
-                >
-                  <img
-                    src="https://static.vecteezy.com/system/resources/previews/032/048/844/non_2x/three-dot-icon-vector.jpg"
-                    className="w-10 h-4 rounded-lg hover:opacity-80 transition"
-                  />
-                </button>
-                <div
-                  className={`dropdown-content menu bg-base-100 rounded-xl shadow-lg p-2 w-40 mt-2 absolute right-0 z-50 ${
-                    openId === r.id ? "block" : "hidden"
-                  }`}
-                >
-                  <ul>
-                    <li>
-                      <a
-                        href={`/form/general?id=${r.id}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          router.push(`/form/general?id=${r.id}`);
-                        }}
-                      >
-                        Edit
-                      </a>
-                    </li>
-                    <li>
-                      <button
-                        className="w-full text-left px-2 py-1 hover:bg-gray-200"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-
-                          const confirmed = window.confirm("Are you sure you want to mark this project as closed? This will permanently label your project as completed, conveying that no more updates will be made.");
-                          if (!confirmed) return;
-                          closeReport(r.id);
-                        }}
-                      >
-                        Mark as Closed
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
+              <span className="text-xs bg-teal-100 text-teal-700 font-medium px-2 py-1 rounded-md">
+                Edit
+              </span>
             </div>
             <div className="mt-2 flex flex-col gap-1">
               <p className="text-sm text-gray-600">

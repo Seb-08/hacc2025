@@ -34,7 +34,6 @@ export const reports = pgTable("reports", {
   isLatest: boolean("is_latest").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-  status: statusEnum("status").notNull().default("open"),
 });
 
 // ---------- ISSUES ----------
