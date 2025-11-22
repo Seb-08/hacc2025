@@ -27,6 +27,7 @@ export default function ReportsPage() {
   const [sort, setSort] = useState<SortOption>('newest'); // default: newest → oldest
   const [highlighted, setHighlighted] = useState<number>(-1);
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'open' | 'closed'>('all');
+  const [showSuggestions, setShowSuggestions] = useState(false); // NEW
 
   // Load reports from API
   useEffect(() => {
@@ -124,7 +125,7 @@ export default function ReportsPage() {
     return result;
   }, [reports, search, selectedDept, sort, selectedStatus]);
 
-  // Suggestions (for autosuggest dropdown) — show matches by name or department
+  // Suggestions (for autosuggest dropdown)
   const suggestions = useMemo(() => {
     const term = search.toLowerCase().trim();
     if (!term) return [];
@@ -163,6 +164,7 @@ export default function ReportsPage() {
         !inputRef.current.contains(target)
       ) {
         setHighlighted(-1);
+        setShowSuggestions(false); // CLOSE DROPDOWN
       }
     }
 
@@ -172,23 +174,36 @@ export default function ReportsPage() {
 
   // Handle keyboard navigation in search input
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (!suggestions.length) return;
+    if (!suggestions.length) {
+      if (e.key === 'Escape') {
+        setHighlighted(-1);
+        setShowSuggestions(false);
+      }
+      return;
+    }
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
+      setShowSuggestions(true);
       setHighlighted((h) => Math.min(h + 1, suggestions.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
+      setShowSuggestions(true);
       setHighlighted((h) => Math.max(h - 1, 0));
     } else if (e.key === 'Enter') {
       if (highlighted >= 0 && highlighted < suggestions.length) {
         const selected = suggestions[highlighted];
         if (selected) {
+          setShowSuggestions(false); // hide when selecting
           router.push(`/reports/view/${selected.id}`);
         }
+      } else {
+        // normal "search" enter → just close dropdown
+        setShowSuggestions(false);
       }
     } else if (e.key === 'Escape') {
       setHighlighted(-1);
+      setShowSuggestions(false);
     }
   }
 
@@ -222,17 +237,23 @@ export default function ReportsPage() {
               onChange={(e) => {
                 setSearch(e.target.value);
                 setHighlighted(-1);
+                setShowSuggestions(true); // typing → show suggestions
               }}
               onKeyDown={handleSearchKeyDown}
+              onFocus={() => {
+                if (search.trim() && suggestions.length > 0) {
+                  setShowSuggestions(true);
+                }
+              }}
               placeholder="Search by project name or department..."
               className="w-full border rounded-full px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2FA8A3]"
             />
 
             {/* Suggestions dropdown */}
-            {suggestions.length > 0 && highlighted >= -1 && (
+            {showSuggestions && suggestions.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute left-0 right-0 mt-2 bg-white border rounded-xl shadow-lg z-20 overflow-hidden"
+                className="absolute left-0 right-0 mt-2 bg-white border rounded-xl shadow-lg z-20 overflow-hidden max-h-64 overflow-y-auto"
               >
                 {suggestions.map((s, idx) => (
                   <button
@@ -241,17 +262,19 @@ export default function ReportsPage() {
                     onMouseEnter={() => setHighlighted(idx)}
                     onMouseLeave={() => setHighlighted(-1)}
                     onClick={() => {
+                      setShowSuggestions(false); // hide on click
                       router.push(`/reports/view/${s.id}`);
                     }}
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${
                       highlighted === idx ? 'bg-gray-100' : ''
-                    }`
-                    }
+                    }`}
                   >
                     <div className="font-medium text-[#002C3E] line-clamp-1">
                       {s.name || 'Untitled Report'}
                     </div>
-                    <div className="text-xs text-gray-500">{s.department || '—'}</div>
+                    <div className="text-xs text-gray-500">
+                      {s.department || '—'}
+                    </div>
                   </button>
                 ))}
               </div>
